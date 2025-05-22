@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'setlistfm' => [
+        'api_key' => env('SETLISTFM_API_KEY'),
+    ],
+
 ];
