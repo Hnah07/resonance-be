@@ -33,6 +33,10 @@ class CreateNewUser implements CreatesNewUsers
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
             'role' => 'user', // Set a default role
+            'is_active' => true, // Set default active status
+            'bio' => $input['bio'] ?? null,
+            'longitude' => $input['longitude'] ?? null,
+            'latitude' => $input['latitude'] ?? null,
         ]);
     }
 }

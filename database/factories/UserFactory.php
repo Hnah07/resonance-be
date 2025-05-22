@@ -38,6 +38,10 @@ class UserFactory extends Factory
             'profile_photo_path' => null,
             'current_team_id' => null,
             'role' => 'user',
+            'is_active' => true,
+            'bio' => fake()->optional()->paragraph(),
+            'longitude' => fake()->optional()->longitude(),
+            'latitude' => fake()->optional()->latitude(),
         ];
     }
 

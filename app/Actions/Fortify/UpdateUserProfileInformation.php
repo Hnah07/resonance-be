@@ -22,6 +22,9 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
+            'bio' => ['nullable', 'string', 'max:65535'],
+            'longitude' => ['nullable', 'string', 'max:255'],
+            'latitude' => ['nullable', 'string', 'max:255'],
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {
@@ -38,6 +41,9 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'name' => $input['name'] ?? null,
                 'username' => $input['username'],
                 'email' => $input['email'],
+                'bio' => $input['bio'] ?? null,
+                'longitude' => $input['longitude'] ?? null,
+                'latitude' => $input['latitude'] ?? null,
             ])->save();
         }
     }
@@ -54,6 +60,9 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'username' => $input['username'],
             'email' => $input['email'],
             'email_verified_at' => null,
+            'bio' => $input['bio'] ?? null,
+            'longitude' => $input['longitude'] ?? null,
+            'latitude' => $input['latitude'] ?? null,
         ])->save();
 
         $user->sendEmailVerificationNotification();
