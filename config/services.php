@@ -39,4 +39,8 @@ return [
         'api_key' => env('SETLISTFM_API_KEY'),
     ],
 
+    'lastfm' => [
+        'api_key' => env('LASTFM_API_KEY'),
+    ],
+
 ];
