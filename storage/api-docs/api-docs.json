@@ -1,0 +1,671 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Resonance API Documentation",
+        "description": "API documentation for Resonance",
+        "contact": {
+            "email": "casier07@hotmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://resonance-be.ddev.site",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/api/events": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Get all events",
+                "operationId": "7058ab7c89d20c752b6afd6d808f6526",
+                "parameters": [
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Field to sort by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "start_date",
+                            "enum": [
+                                "name",
+                                "start_date",
+                                "end_date",
+                                "type",
+                                "created_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_direction",
+                        "in": "query",
+                        "description": "Sort direction",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Filter by event type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "concert",
+                                "festival",
+                                "tour",
+                                "clubnight",
+                                "other"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "start_date_from",
+                        "in": "query",
+                        "description": "Filter events starting from this date",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "start_date_to",
+                        "in": "query",
+                        "description": "Filter events starting until this date",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-12-31"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending_approval",
+                                "verified",
+                                "rejected"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search in name and description",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Tomorrowland"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of events",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid",
+                                                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Tomorrowland 2024"
+                                                    },
+                                                    "start_date": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2024-07-19"
+                                                    },
+                                                    "end_date": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2024-07-28"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "The world's biggest electronic dance music festival, featuring the best DJs from around the globe.",
+                                                        "nullable": true
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "concert",
+                                                            "festival",
+                                                            "tour",
+                                                            "clubnight",
+                                                            "other"
+                                                        ],
+                                                        "example": "festival"
+                                                    },
+                                                    "image_url": {
+                                                        "type": "string",
+                                                        "example": "https://resonance-be.ddev.site/storage/events/tomorrowland-2024.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "source": {
+                                                        "type": "string",
+                                                        "example": "manual"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "verified"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "https://resonance-be.ddev.site/api/events?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "https://resonance-be.ddev.site/api/events?page=5"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": "https://resonance-be.ddev.site/api/events?page=2"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Create a new event",
+                "operationId": "508895e03d7f10edac84357084c87b20",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "start_date",
+                                    "end_date",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Rock Werchter 2024"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-06-27"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-06-30"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Belgium's biggest rock festival featuring international and local artists."
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "concert",
+                                            "festival",
+                                            "tour",
+                                            "clubnight",
+                                            "other"
+                                        ],
+                                        "example": "festival"
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://resonance-be.ddev.site/storage/events/rock-werchter-2024.jpg"
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "enum": [
+                                            "manual",
+                                            "api"
+                                        ],
+                                        "example": "manual"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending_approval",
+                                            "verified",
+                                            "rejected"
+                                        ],
+                                        "example": "pending_approval"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Event created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Rock Werchter 2024"
+                                        },
+                                        "start_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2024-06-27"
+                                        },
+                                        "end_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2024-06-30"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "Belgium's biggest rock festival featuring international and local artists."
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "concert",
+                                                "festival",
+                                                "tour",
+                                                "clubnight",
+                                                "other"
+                                            ],
+                                            "example": "festival"
+                                        },
+                                        "image_url": {
+                                            "type": "string",
+                                            "example": "https://resonance-be.ddev.site/storage/events/rock-werchter-2024.jpg"
+                                        },
+                                        "source": {
+                                            "type": "string",
+                                            "example": "manual"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "pending_approval"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/events/{id}": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Get a specific event",
+                "operationId": "6f743f71f7a88dbe57be1d9c9ebf47cb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Event UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Event details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Tomorrowland 2024"
+                                        },
+                                        "start_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2024-07-19"
+                                        },
+                                        "end_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2024-07-28"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "The world's biggest electronic dance music festival, featuring the best DJs from around the globe."
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "concert",
+                                                "festival",
+                                                "tour",
+                                                "clubnight",
+                                                "other"
+                                            ],
+                                            "example": "festival"
+                                        },
+                                        "image_url": {
+                                            "type": "string",
+                                            "example": "https://resonance-be.ddev.site/storage/events/tomorrowland-2024.jpg"
+                                        },
+                                        "source": {
+                                            "type": "string",
+                                            "example": "manual"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "verified"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Event not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Update an event",
+                "operationId": "fb130dcf1ab4d7abbd3a173741df1f8f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Event UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Tomorrowland 2024 - The Story of Planaxis"
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-07-19"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-07-28"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "The world's biggest electronic dance music festival, featuring the best DJs from around the globe. This year's theme: The Story of Planaxis."
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "concert",
+                                            "festival",
+                                            "tour",
+                                            "clubnight",
+                                            "other"
+                                        ],
+                                        "example": "festival"
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://resonance-be.ddev.site/storage/events/tomorrowland-2024-planaxis.jpg"
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "enum": [
+                                            "manual",
+                                            "api"
+                                        ],
+                                        "example": "manual"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending_approval",
+                                            "verified",
+                                            "rejected"
+                                        ],
+                                        "example": "verified"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Event updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "Tomorrowland 2024 - The Story of Planaxis"
+                                        },
+                                        "start_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2024-07-19"
+                                        },
+                                        "end_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2024-07-28"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "example": "The world's biggest electronic dance music festival, featuring the best DJs from around the globe. This year's theme: The Story of Planaxis."
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "concert",
+                                                "festival",
+                                                "tour",
+                                                "clubnight",
+                                                "other"
+                                            ],
+                                            "example": "festival"
+                                        },
+                                        "image_url": {
+                                            "type": "string",
+                                            "example": "https://resonance-be.ddev.site/storage/events/tomorrowland-2024-planaxis.jpg"
+                                        },
+                                        "source": {
+                                            "type": "string",
+                                            "example": "manual"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "verified"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Event not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Delete an event",
+                "operationId": "b8c8f4b41a32532f5e9f7146e511bc61",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Event UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Event deleted successfully"
+                    },
+                    "404": {
+                        "description": "Event not found"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Events",
+            "description": "API Endpoints for managing events"
+        }
+    ]
+}
