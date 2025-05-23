@@ -33,8 +33,8 @@ class LocationSeeder extends Seeder
         $location = Location::create([
             'name' => 'Festivalpark Stenehei',
             'street' => 'Kastelsedijk',
-            'house_number' => '2480',
-            'postal_code' => 'Dessel',
+            'house_number' => '5',
+            'postal_code' => '2140',
             'city' => 'Dessel',
             'country_id' => Country::where('name', 'Belgium')->first()->id,
             'latitude' => '51.2238',

@@ -15,6 +15,391 @@
         }
     ],
     "paths": {
+        "/api/artists": {
+            "get": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Get all artists",
+                "operationId": "2c8aed1387cca1c65d98da7ee11ac926",
+                "parameters": [
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Field to sort by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "name",
+                            "enum": [
+                                "name",
+                                "created_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_direction",
+                        "in": "query",
+                        "description": "Sort direction",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending_approval",
+                                "verified",
+                                "rejected"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search in name and description",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of artists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Artist"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string"
+                                                },
+                                                "last": {
+                                                    "type": "string"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Create a new artist",
+                "operationId": "83d2888bdc6fac66b9a7cc81c4c950fb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "David Guetta"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "French DJ and music producer known for electronic dance music.",
+                                        "nullable": true
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Belgium",
+                                        "nullable": true
+                                    },
+                                    "formed_year": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2002",
+                                        "nullable": true
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://resonance-be.ddev.site/storage/artists/david-guetta.jpg",
+                                        "nullable": true
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "enum": [
+                                            "manual",
+                                            "api"
+                                        ],
+                                        "example": "manual"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending_approval",
+                                            "verified",
+                                            "rejected"
+                                        ],
+                                        "example": "pending_approval"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Artist created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Artist"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/artists/{id}": {
+            "get": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Get a specific artist",
+                "operationId": "d0b68c06b8bc310fbe24c6d3ea80dac3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Artist details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Artist"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Artist not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Update an artist",
+                "operationId": "5a5632ea389f9a05336f8d035f5a44c0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "David Guetta"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "French DJ and music producer known for electronic dance music.",
+                                        "nullable": true
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Belgium",
+                                        "nullable": true
+                                    },
+                                    "formed_year": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2002",
+                                        "nullable": true
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://resonance-be.ddev.site/storage/artists/david-guetta.jpg",
+                                        "nullable": true
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "enum": [
+                                            "manual",
+                                            "api"
+                                        ],
+                                        "example": "manual"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending_approval",
+                                            "verified",
+                                            "rejected"
+                                        ],
+                                        "example": "verified"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Artist updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Artist"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Artist not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Delete an artist",
+                "operationId": "4f6d8bd2c8b4b738af7589b72348ac20",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Artist deleted successfully"
+                    },
+                    "404": {
+                        "description": "Artist not found"
+                    }
+                }
+            }
+        },
         "/api/events": {
             "get": {
                 "tags": [
@@ -295,7 +680,8 @@
                                     },
                                     "description": {
                                         "type": "string",
-                                        "example": "Belgium's biggest rock festival featuring international and local artists."
+                                        "example": "Belgium's biggest rock festival featuring international and local artists.",
+                                        "nullable": true
                                     },
                                     "type": {
                                         "type": "string",
@@ -310,7 +696,8 @@
                                     },
                                     "image_url": {
                                         "type": "string",
-                                        "example": "https://resonance-be.ddev.site/storage/events/rock-werchter-2024.jpg"
+                                        "example": "https://resonance-be.ddev.site/storage/events/rock-werchter-2024.jpg",
+                                        "nullable": true
                                     },
                                     "source": {
                                         "type": "string",
@@ -341,55 +728,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "string",
-                                            "format": "uuid",
-                                            "example": "123e4567-e89b-12d3-a456-426614174000"
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "Rock Werchter 2024"
-                                        },
-                                        "start_date": {
-                                            "type": "string",
-                                            "format": "date",
-                                            "example": "2024-06-27"
-                                        },
-                                        "end_date": {
-                                            "type": "string",
-                                            "format": "date",
-                                            "example": "2024-06-30"
-                                        },
-                                        "description": {
-                                            "type": "string",
-                                            "example": "Belgium's biggest rock festival featuring international and local artists."
-                                        },
-                                        "type": {
-                                            "type": "string",
-                                            "enum": [
-                                                "concert",
-                                                "festival",
-                                                "tour",
-                                                "clubnight",
-                                                "other"
-                                            ],
-                                            "example": "festival"
-                                        },
-                                        "image_url": {
-                                            "type": "string",
-                                            "example": "https://resonance-be.ddev.site/storage/events/rock-werchter-2024.jpg"
-                                        },
-                                        "source": {
-                                            "type": "string",
-                                            "example": "manual"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "pending_approval"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/Event"
                                 }
                             }
                         }
@@ -426,55 +765,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "string",
-                                            "format": "uuid",
-                                            "example": "123e4567-e89b-12d3-a456-426614174000"
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "Tomorrowland 2024"
-                                        },
-                                        "start_date": {
-                                            "type": "string",
-                                            "format": "date",
-                                            "example": "2024-07-19"
-                                        },
-                                        "end_date": {
-                                            "type": "string",
-                                            "format": "date",
-                                            "example": "2024-07-28"
-                                        },
-                                        "description": {
-                                            "type": "string",
-                                            "example": "The world's biggest electronic dance music festival, featuring the best DJs from around the globe."
-                                        },
-                                        "type": {
-                                            "type": "string",
-                                            "enum": [
-                                                "concert",
-                                                "festival",
-                                                "tour",
-                                                "clubnight",
-                                                "other"
-                                            ],
-                                            "example": "festival"
-                                        },
-                                        "image_url": {
-                                            "type": "string",
-                                            "example": "https://resonance-be.ddev.site/storage/events/tomorrowland-2024.jpg"
-                                        },
-                                        "source": {
-                                            "type": "string",
-                                            "example": "manual"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "verified"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/Event"
                                 }
                             }
                         }
@@ -525,7 +816,8 @@
                                     },
                                     "description": {
                                         "type": "string",
-                                        "example": "The world's biggest electronic dance music festival, featuring the best DJs from around the globe. This year's theme: The Story of Planaxis."
+                                        "example": "The world's biggest electronic dance music festival, featuring the best DJs from around the globe. This year's theme: The Story of Planaxis.",
+                                        "nullable": true
                                     },
                                     "type": {
                                         "type": "string",
@@ -540,7 +832,8 @@
                                     },
                                     "image_url": {
                                         "type": "string",
-                                        "example": "https://resonance-be.ddev.site/storage/events/tomorrowland-2024-planaxis.jpg"
+                                        "example": "https://resonance-be.ddev.site/storage/events/tomorrowland-2024-planaxis.jpg",
+                                        "nullable": true
                                     },
                                     "source": {
                                         "type": "string",
@@ -571,55 +864,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "string",
-                                            "format": "uuid",
-                                            "example": "123e4567-e89b-12d3-a456-426614174000"
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "Tomorrowland 2024 - The Story of Planaxis"
-                                        },
-                                        "start_date": {
-                                            "type": "string",
-                                            "format": "date",
-                                            "example": "2024-07-19"
-                                        },
-                                        "end_date": {
-                                            "type": "string",
-                                            "format": "date",
-                                            "example": "2024-07-28"
-                                        },
-                                        "description": {
-                                            "type": "string",
-                                            "example": "The world's biggest electronic dance music festival, featuring the best DJs from around the globe. This year's theme: The Story of Planaxis."
-                                        },
-                                        "type": {
-                                            "type": "string",
-                                            "enum": [
-                                                "concert",
-                                                "festival",
-                                                "tour",
-                                                "clubnight",
-                                                "other"
-                                            ],
-                                            "example": "festival"
-                                        },
-                                        "image_url": {
-                                            "type": "string",
-                                            "example": "https://resonance-be.ddev.site/storage/events/tomorrowland-2024-planaxis.jpg"
-                                        },
-                                        "source": {
-                                            "type": "string",
-                                            "example": "manual"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "verified"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/Event"
                                 }
                             }
                         }
@@ -660,12 +905,725 @@
                     }
                 }
             }
+        },
+        "/api/locations": {
+            "get": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Get all locations",
+                "operationId": "c22aa1cae7ab2b2ad315141d06fec369",
+                "parameters": [
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Field to sort by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "name",
+                            "enum": [
+                                "name",
+                                "city",
+                                "country",
+                                "created_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_direction",
+                        "in": "query",
+                        "description": "Sort direction",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "description": "Filter by country",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "Filter by city",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending_approval",
+                                "verified",
+                                "rejected"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search in name, city, and country",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of locations",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid",
+                                                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Sportpaleis Antwerpen"
+                                                    },
+                                                    "street": {
+                                                        "type": "string",
+                                                        "example": "Schijnpoortweg 119"
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "Antwerpen"
+                                                    },
+                                                    "postal_code": {
+                                                        "type": "string",
+                                                        "example": "2170"
+                                                    },
+                                                    "country": {
+                                                        "type": "string",
+                                                        "example": "Belgium"
+                                                    },
+                                                    "latitude": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 51.2306
+                                                    },
+                                                    "longitude": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 4.4452
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "image_url": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "source": {
+                                                        "type": "string",
+                                                        "example": "manual"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "verified"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string"
+                                                },
+                                                "last": {
+                                                    "type": "string"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Create a new location",
+                "operationId": "055665bfbdc18cab3dc956925a9000b4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "country"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Sportpaleis Antwerpen"
+                                    },
+                                    "street": {
+                                        "type": "string",
+                                        "example": "Schijnpoortweg",
+                                        "nullable": true
+                                    },
+                                    "house_number": {
+                                        "type": "string",
+                                        "example": "119",
+                                        "nullable": true
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "Antwerpen",
+                                        "nullable": true
+                                    },
+                                    "postal_code": {
+                                        "type": "string",
+                                        "example": "2170",
+                                        "nullable": true
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Belgium"
+                                    },
+                                    "latitude": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 51.2306,
+                                        "nullable": true
+                                    },
+                                    "longitude": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 4.4452,
+                                        "nullable": true
+                                    },
+                                    "website": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "enum": [
+                                            "manual",
+                                            "api"
+                                        ],
+                                        "example": "manual"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending_approval",
+                                            "verified",
+                                            "rejected"
+                                        ],
+                                        "example": "pending_approval"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Location created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Location"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/locations/{id}": {
+            "get": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Get a specific location",
+                "operationId": "bcaac2b6f85e83cdc99139be535c66e6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Location UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Location"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Location not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Update a location",
+                "operationId": "3ac5d4120b6fb23f55f179649493a2d8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Location UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Sportpaleis Antwerpen"
+                                    },
+                                    "street": {
+                                        "type": "string",
+                                        "example": "Schijnpoortweg",
+                                        "nullable": true
+                                    },
+                                    "house_number": {
+                                        "type": "string",
+                                        "example": "119",
+                                        "nullable": true
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "Antwerpen",
+                                        "nullable": true
+                                    },
+                                    "postal_code": {
+                                        "type": "string",
+                                        "example": "2170",
+                                        "nullable": true
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Belgium"
+                                    },
+                                    "latitude": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 51.2306,
+                                        "nullable": true
+                                    },
+                                    "longitude": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 4.4452,
+                                        "nullable": true
+                                    },
+                                    "website": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "enum": [
+                                            "manual",
+                                            "api"
+                                        ]
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "pending_approval",
+                                            "verified",
+                                            "rejected"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Location updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Location"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Location not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Delete a location",
+                "operationId": "721591ee086203214e6eb54f25625656",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Location UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Location deleted successfully"
+                    },
+                    "404": {
+                        "description": "Location not found"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Artist": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "David Guetta"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "French DJ and music producer known for electronic dance music.",
+                        "nullable": true
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Belgium",
+                        "nullable": true
+                    },
+                    "formed_year": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2002",
+                        "nullable": true
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://resonance-be.ddev.site/storage/artists/david-guetta.jpg",
+                        "nullable": true
+                    },
+                    "source": {
+                        "type": "string",
+                        "example": "manual"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "verified"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Event": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Tomorrowland 2024"
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-07-19"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-07-28"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "The world's biggest electronic dance music festival, featuring the best DJs from around the globe.",
+                        "nullable": true
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "concert",
+                            "festival",
+                            "tour",
+                            "clubnight",
+                            "other"
+                        ],
+                        "example": "festival"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://resonance-be.ddev.site/storage/events/tomorrowland-2024.jpg",
+                        "nullable": true
+                    },
+                    "source": {
+                        "type": "string",
+                        "example": "manual"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "verified"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Location": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Sportpaleis Antwerpen"
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Schijnpoortweg",
+                        "nullable": true
+                    },
+                    "house_number": {
+                        "type": "string",
+                        "example": "119",
+                        "nullable": true
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Antwerpen",
+                        "nullable": true
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "example": "2170",
+                        "nullable": true
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Belgium"
+                    },
+                    "latitude": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 51.2306,
+                        "nullable": true
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 4.4452,
+                        "nullable": true
+                    },
+                    "website": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "source": {
+                        "type": "string",
+                        "example": "manual"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "verified"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
         }
     },
     "tags": [
         {
+            "name": "Artists",
+            "description": "API Endpoints for managing artists"
+        },
+        {
             "name": "Events",
             "description": "API Endpoints for managing events"
+        },
+        {
+            "name": "Locations",
+            "description": "API Endpoints for managing locations"
         }
     ]
 }

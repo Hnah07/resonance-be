@@ -10,6 +10,22 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
+ * @OA\Schema(
+ *     schema="Event",
+ *     type="object",
+ *     @OA\Property(property="id", type="string", format="uuid", example="123e4567-e89b-12d3-a456-426614174000"),
+ *     @OA\Property(property="name", type="string", example="Tomorrowland 2024"),
+ *     @OA\Property(property="start_date", type="string", format="date", example="2024-07-19"),
+ *     @OA\Property(property="end_date", type="string", format="date", example="2024-07-28"),
+ *     @OA\Property(property="description", type="string", nullable=true, example="The world's biggest electronic dance music festival, featuring the best DJs from around the globe."),
+ *     @OA\Property(property="type", type="string", enum={"concert", "festival", "tour", "clubnight", "other"}, example="festival"),
+ *     @OA\Property(property="image_url", type="string", nullable=true, example="https://resonance-be.ddev.site/storage/events/tomorrowland-2024.jpg"),
+ *     @OA\Property(property="source", type="string", example="manual"),
+ *     @OA\Property(property="status", type="string", example="verified"),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ * 
  * @OA\Tag(
  *     name="Events",
  *     description="API Endpoints for managing events"
@@ -211,9 +227,9 @@ class EventController extends Controller
      *             @OA\Property(property="name", type="string", example="Rock Werchter 2024"),
      *             @OA\Property(property="start_date", type="string", format="date", example="2024-06-27"),
      *             @OA\Property(property="end_date", type="string", format="date", example="2024-06-30"),
-     *             @OA\Property(property="description", type="string", example="Belgium's biggest rock festival featuring international and local artists."),
+     *             @OA\Property(property="description", type="string", nullable=true, example="Belgium's biggest rock festival featuring international and local artists."),
      *             @OA\Property(property="type", type="string", enum={"concert", "festival", "tour", "clubnight", "other"}, example="festival"),
-     *             @OA\Property(property="image_url", type="string", example="https://resonance-be.ddev.site/storage/events/rock-werchter-2024.jpg"),
+     *             @OA\Property(property="image_url", type="string", nullable=true, example="https://resonance-be.ddev.site/storage/events/rock-werchter-2024.jpg"),
      *             @OA\Property(property="source", type="string", enum={"manual", "api"}, example="manual"),
      *             @OA\Property(property="status", type="string", enum={"pending_approval", "verified", "rejected"}, example="pending_approval")
      *         )
@@ -221,18 +237,7 @@ class EventController extends Controller
      *     @OA\Response(
      *         response=201,
      *         description="Event created successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="string", format="uuid", example="123e4567-e89b-12d3-a456-426614174000"),
-     *             @OA\Property(property="name", type="string", example="Rock Werchter 2024"),
-     *             @OA\Property(property="start_date", type="string", format="date", example="2024-06-27"),
-     *             @OA\Property(property="end_date", type="string", format="date", example="2024-06-30"),
-     *             @OA\Property(property="description", type="string", example="Belgium's biggest rock festival featuring international and local artists."),
-     *             @OA\Property(property="type", type="string", enum={"concert", "festival", "tour", "clubnight", "other"}, example="festival"),
-     *             @OA\Property(property="image_url", type="string", example="https://resonance-be.ddev.site/storage/events/rock-werchter-2024.jpg"),
-     *             @OA\Property(property="source", type="string", example="manual"),
-     *             @OA\Property(property="status", type="string", example="pending_approval")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/Event")
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -285,18 +290,7 @@ class EventController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Event details",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="string", format="uuid", example="123e4567-e89b-12d3-a456-426614174000"),
-     *             @OA\Property(property="name", type="string", example="Tomorrowland 2024"),
-     *             @OA\Property(property="start_date", type="string", format="date", example="2024-07-19"),
-     *             @OA\Property(property="end_date", type="string", format="date", example="2024-07-28"),
-     *             @OA\Property(property="description", type="string", example="The world's biggest electronic dance music festival, featuring the best DJs from around the globe."),
-     *             @OA\Property(property="type", type="string", enum={"concert", "festival", "tour", "clubnight", "other"}, example="festival"),
-     *             @OA\Property(property="image_url", type="string", example="https://resonance-be.ddev.site/storage/events/tomorrowland-2024.jpg"),
-     *             @OA\Property(property="source", type="string", example="manual"),
-     *             @OA\Property(property="status", type="string", example="verified")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/Event")
      *     ),
      *     @OA\Response(
      *         response=404,
@@ -329,9 +323,9 @@ class EventController extends Controller
      *             @OA\Property(property="name", type="string", example="Tomorrowland 2024 - The Story of Planaxis"),
      *             @OA\Property(property="start_date", type="string", format="date", example="2024-07-19"),
      *             @OA\Property(property="end_date", type="string", format="date", example="2024-07-28"),
-     *             @OA\Property(property="description", type="string", example="The world's biggest electronic dance music festival, featuring the best DJs from around the globe. This year's theme: The Story of Planaxis."),
+     *             @OA\Property(property="description", type="string", nullable=true, example="The world's biggest electronic dance music festival, featuring the best DJs from around the globe. This year's theme: The Story of Planaxis."),
      *             @OA\Property(property="type", type="string", enum={"concert", "festival", "tour", "clubnight", "other"}, example="festival"),
-     *             @OA\Property(property="image_url", type="string", example="https://resonance-be.ddev.site/storage/events/tomorrowland-2024-planaxis.jpg"),
+     *             @OA\Property(property="image_url", type="string", nullable=true, example="https://resonance-be.ddev.site/storage/events/tomorrowland-2024-planaxis.jpg"),
      *             @OA\Property(property="source", type="string", enum={"manual", "api"}, example="manual"),
      *             @OA\Property(property="status", type="string", enum={"pending_approval", "verified", "rejected"}, example="verified")
      *         )
@@ -339,18 +333,7 @@ class EventController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Event updated successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="string", format="uuid", example="123e4567-e89b-12d3-a456-426614174000"),
-     *             @OA\Property(property="name", type="string", example="Tomorrowland 2024 - The Story of Planaxis"),
-     *             @OA\Property(property="start_date", type="string", format="date", example="2024-07-19"),
-     *             @OA\Property(property="end_date", type="string", format="date", example="2024-07-28"),
-     *             @OA\Property(property="description", type="string", example="The world's biggest electronic dance music festival, featuring the best DJs from around the globe. This year's theme: The Story of Planaxis."),
-     *             @OA\Property(property="type", type="string", enum={"concert", "festival", "tour", "clubnight", "other"}, example="festival"),
-     *             @OA\Property(property="image_url", type="string", example="https://resonance-be.ddev.site/storage/events/tomorrowland-2024-planaxis.jpg"),
-     *             @OA\Property(property="source", type="string", example="manual"),
-     *             @OA\Property(property="status", type="string", example="verified")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/Event")
      *     ),
      *     @OA\Response(
      *         response=404,
