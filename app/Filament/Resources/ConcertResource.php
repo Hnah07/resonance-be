@@ -21,7 +21,11 @@ class ConcertResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-musical-note';
 
-    protected static ?string $navigationGroup = 'Content Management';
+    protected static ?string $navigationGroup = 'Music Management';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $recordTitleAttribute = 'date';
 
     public static function form(Form $form): Form
     {
