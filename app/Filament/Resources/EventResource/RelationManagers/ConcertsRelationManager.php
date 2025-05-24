@@ -1,72 +1,33 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\EventResource\RelationManagers;
 
-use App\Filament\Resources\ConcertResource\Pages;
-use App\Filament\Resources\ConcertResource\RelationManagers;
-use App\Models\Concert;
-use App\Models\Source;
-use App\Models\Status;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use App\Models\Source;
+use App\Models\Status;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ConcertResource extends Resource
+class ConcertsRelationManager extends RelationManager
 {
-    protected static ?string $model = Concert::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-musical-note';
-
-    protected static ?string $navigationGroup = 'Music Management';
-
-    protected static ?int $navigationSort = 2;
+    protected static string $relationship = 'concerts';
 
     protected static ?string $recordTitleAttribute = 'date';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('event_id')
-                    ->relationship('event', 'name')
-                    ->required()
-                    ->searchable()
-                    ->preload()
-                    ->createOptionForm([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\DatePicker::make('start_date')
-                            ->required(),
-                        Forms\Components\DatePicker::make('end_date')
-                            ->required(),
-                        Forms\Components\Select::make('type')
-                            ->required()
-                            ->options([
-                                'festival' => 'Festival',
-                                'concert' => 'Concert',
-                                'tour' => 'Tour',
-                                'show' => 'Show',
-                                'other' => 'Other',
-                            ]),
-                        Forms\Components\Textarea::make('description')
-                            ->maxLength(65535)
-                            ->columnSpanFull(),
-                        Forms\Components\TextInput::make('image_url')
-                            ->url()
-                            ->maxLength(255),
-                        Forms\Components\Hidden::make('source_id')
-                            ->default(fn() => Source::where('source', 'Manual')->first()?->id),
-                        Forms\Components\Hidden::make('status_id')
-                            ->default(fn() => Status::where('status', 'Verified')->first()?->id),
-                    ]),
                 Forms\Components\DatePicker::make('date')
                     ->required()
-                    ->minDate(now()->startOfDay()),
+                    ->minDate(now()->startOfDay())
+                    ->native(false)
+                    ->displayFormat('d/m/Y')
+                    ->closeOnDateSelection(),
                 Forms\Components\Select::make('location_id')
                     ->relationship('location', 'name')
                     ->required()
@@ -111,33 +72,33 @@ class ConcertResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('event.name')
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('date')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('location.name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('source.source')
-                    ->searchable()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('status.status')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->badge()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->color(fn(string $state): string => match ($state) {
+                        'verified' => 'success',
+                        'pending_approval' => 'warning',
+                        'rejected' => 'danger',
+                        default => 'gray',
+                    }),
+                Tables\Columns\TextColumn::make('source.source')
+                    ->badge()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->color(fn(string $state): string => match ($state) {
+                        'manual' => 'primary',
+                        'api' => 'success',
+                        default => 'gray',
+                    }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -146,6 +107,31 @@ class ConcertResource extends Resource
                     ->relationship('source', 'source'),
                 Tables\Filters\SelectFilter::make('location')
                     ->relationship('location', 'name'),
+                Tables\Filters\Filter::make('date')
+                    ->form([
+                        Forms\Components\DatePicker::make('date_from')
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->closeOnDateSelection(),
+                        Forms\Components\DatePicker::make('date_until')
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->closeOnDateSelection(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['date_from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                            )
+                            ->when(
+                                $data['date_until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                            );
+                    }),
+            ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -154,23 +140,20 @@ class ConcertResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('updateStatus')
+                        ->icon('heroicon-o-check-circle')
+                        ->form([
+                            Forms\Components\Select::make('status')
+                                ->relationship('status', 'status')
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $records->each(function ($record) use ($data) {
+                                $record->status()->associate(Status::where('status', $data['status'])->first());
+                                $record->save();
+                            });
+                        }),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListConcerts::route('/'),
-            'create' => Pages\CreateConcert::route('/create'),
-            'edit' => Pages\EditConcert::route('/{record}/edit'),
-        ];
     }
 }
