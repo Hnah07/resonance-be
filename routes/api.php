@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ArtistController;
+use App\Http\Controllers\ConcertController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -13,3 +14,4 @@ Route::get('/user', function (Request $request) {
 Route::apiResource('events', EventController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::apiResource('locations', LocationController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::apiResource('artists', ArtistController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+Route::apiResource('concerts', ConcertController::class)->only(['index', 'store', 'show', 'update', 'destroy']);

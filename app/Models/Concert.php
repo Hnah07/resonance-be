@@ -26,4 +26,14 @@ class Concert extends Model
     {
         return $this->belongsTo(Location::class);
     }
+
+    public function source(): BelongsTo
+    {
+        return $this->belongsTo(Source::class);
+    }
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(Status::class);
+    }
 }
