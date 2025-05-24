@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use App\Models\Source;
 use App\Models\Status;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 class ConcertsRelationManager extends RelationManager
 {
@@ -106,6 +107,28 @@ class ConcertsRelationManager extends RelationManager
                     ->relationship('source', 'source'),
                 Tables\Filters\SelectFilter::make('location')
                     ->relationship('location', 'name'),
+                Tables\Filters\Filter::make('date')
+                    ->form([
+                        Forms\Components\DatePicker::make('date_from')
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->closeOnDateSelection(),
+                        Forms\Components\DatePicker::make('date_until')
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->closeOnDateSelection(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['date_from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                            )
+                            ->when(
+                                $data['date_until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                            );
+                    }),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
