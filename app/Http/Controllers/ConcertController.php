@@ -6,8 +6,10 @@ use App\Models\Concert;
 use App\Models\Source;
 use App\Models\Status;
 use App\Http\Resources\ConcertResource;
+use App\Http\Resources\ArtistResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Str;
 
 /**
  * @OA\Schema(
@@ -375,5 +377,172 @@ class ConcertController extends Controller
     {
         $concert->delete();
         return response()->json(null, 204);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/concerts/{id}/artists",
+     *     summary="Get all artists for a concert",
+     *     tags={"Concerts"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Concert UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of artists for the concert",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="string", format="uuid"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="description", type="string", nullable=true),
+     *                     @OA\Property(property="country", type="string", nullable=true),
+     *                     @OA\Property(property="formed_year", type="integer", nullable=true),
+     *                     @OA\Property(property="image_url", type="string", nullable=true),
+     *                     @OA\Property(property="source", type="string", nullable=true),
+     *                     @OA\Property(property="status", type="string", nullable=true),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Concert not found"
+     *     )
+     * )
+     */
+    public function getArtists(Concert $concert)
+    {
+        $artists = $concert->artists()
+            ->with(['country', 'source', 'status'])
+            ->select('artists.*')  // Only select artist fields, not pivot fields
+            ->get();
+        return ArtistResource::collection($artists);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/concerts/{id}/artists",
+     *     summary="Attach an artist to a concert",
+     *     tags={"Concerts"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Concert UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(property="name", type="string", example="Arctic Monkeys")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Artist attached successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Artist attached successfully"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="id", type="string", format="uuid"),
+     *                 @OA\Property(property="name", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Concert not found or artist not found"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error or artist already attached"
+     *     )
+     * )
+     */
+    public function attachArtist(Request $request, Concert $concert)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|exists:artists,name'
+        ]);
+
+        // Find artist by name
+        $artist = \App\Models\Artist::where('name', $validated['name'])->firstOrFail();
+
+        // Check if artist is already attached
+        if ($concert->artists()->where('artist_id', $artist->id)->exists()) {
+            return response()->json([
+                'message' => 'Artist is already attached to this concert'
+            ], 422);
+        }
+
+        // Generate a UUID for the pivot table
+        $pivotId = (string) Str::uuid();
+
+        // Attach with the generated UUID
+        $concert->artists()->attach($artist->id, ['id' => $pivotId]);
+
+        return response()->json([
+            'message' => 'Artist attached successfully',
+            'data' => $artist
+        ]);
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/concerts/{id}/artists/{artistId}",
+     *     summary="Detach an artist from a concert",
+     *     tags={"Concerts"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Concert UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="artistId",
+     *         in="path",
+     *         required=true,
+     *         description="Artist UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Artist detached successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Artist detached successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Concert or artist not found"
+     *     )
+     * )
+     */
+    public function detachArtist(Concert $concert, string $artistId)
+    {
+        // Check if artist is attached
+        if (!$concert->artists()->where('artist_id', $artistId)->exists()) {
+            return response()->json([
+                'message' => 'Artist is not attached to this concert'
+            ], 404);
+        }
+
+        $concert->artists()->detach($artistId);
+
+        return response()->json([
+            'message' => 'Artist detached successfully'
+        ]);
     }
 }

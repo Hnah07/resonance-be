@@ -27,4 +27,16 @@ class ArtistResource extends JsonResource
             'updated_at' => $this->updated_at,
         ];
     }
+
+    /**
+     * Get additional data that should be returned with the resource array.
+     *
+     * @return array<string, mixed>
+     */
+    public function with(Request $request): array
+    {
+        return [
+            'pivot' => null
+        ];
+    }
 }
