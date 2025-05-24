@@ -45,6 +45,7 @@ class Artist extends Model
     }
     public function concerts()
     {
-        return $this->belongsToMany(Concert::class);
+        return $this->belongsToMany(Concert::class)
+            ->withTimestamps();
     }
 }

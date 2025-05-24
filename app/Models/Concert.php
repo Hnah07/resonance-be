@@ -40,6 +40,7 @@ class Concert extends Model
 
     public function artists(): BelongsToMany
     {
-        return $this->belongsToMany(Artist::class);
+        return $this->belongsToMany(Artist::class)
+            ->withTimestamps();
     }
 }

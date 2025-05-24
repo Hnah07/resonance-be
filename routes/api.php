@@ -20,3 +20,8 @@ Route::apiResource('concerts', ConcertController::class)->only(['index', 'store'
 Route::get('/concerts/{concert}/artists', [ConcertController::class, 'getArtists']);
 Route::post('/concerts/{concert}/artists', [ConcertController::class, 'attachArtist']);
 Route::delete('/concerts/{concert}/artists/{artistId}', [ConcertController::class, 'detachArtist']);
+
+// Artist concert management routes
+Route::get('/artists/{artist}/concerts', [ArtistController::class, 'getConcerts']);
+Route::post('/artists/{artist}/concerts', [ArtistController::class, 'attachConcert']);
+Route::delete('/artists/{artist}/concerts/{concertId}', [ArtistController::class, 'detachConcert']);
