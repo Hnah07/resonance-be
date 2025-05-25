@@ -714,6 +714,166 @@
                 }
             }
         },
+        "/api/artists/{id}/genres": {
+            "get": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Get all genres for an artist",
+                "operationId": "fc4b95ef4efd1736e98d504ce254c9ee",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of genres for the artist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Artist not found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Attach genres to an artist",
+                "operationId": "00ea3d44aae944e2f9f0ac6810508ffd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "genre_ids"
+                                ],
+                                "properties": {
+                                    "genre_ids": {
+                                        "description": "Array of genre UUIDs to attach",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "uuid",
+                                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Genres attached successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Artist"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Artist not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/artists/{id}/genres/{genreId}": {
+            "delete": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Detach a genre from an artist",
+                "operationId": "f04fa8b3541b7937bf6a8c3dd98b6fca",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "genreId",
+                        "in": "path",
+                        "description": "Genre UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Genre detached successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Artist"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Artist or genre not found"
+                    }
+                }
+            }
+        },
         "/api/concerts": {
             "get": {
                 "tags": [
@@ -2382,6 +2542,23 @@
                     "status": {
                         "type": "string",
                         "example": "verified"
+                    },
+                    "genres": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "Electronic Dance Music"
+                                }
+                            },
+                            "type": "object"
+                        }
                     },
                     "created_at": {
                         "type": "string",

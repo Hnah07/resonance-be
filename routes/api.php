@@ -25,3 +25,8 @@ Route::delete('/concerts/{concert}/artists/{artistId}', [ConcertController::clas
 Route::get('/artists/{artist}/concerts', [ArtistController::class, 'getConcerts']);
 Route::post('/artists/{artist}/concerts', [ArtistController::class, 'attachConcert']);
 Route::delete('/artists/{artist}/concerts/{concertId}', [ArtistController::class, 'detachConcert']);
+
+// Artist genre management routes
+Route::get('/artists/{artist}/genres', [ArtistController::class, 'getGenres']);
+Route::post('/artists/{artist}/genres', [ArtistController::class, 'attachGenres']);
+Route::delete('/artists/{artist}/genres/{genreId}', [ArtistController::class, 'detachGenre']);
