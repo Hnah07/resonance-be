@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ConcertResource\RelationManagers\ArtistsRelationManager;
 
 class ConcertResource extends Resource
 {
@@ -161,7 +162,7 @@ class ConcertResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            'artists' => ArtistsRelationManager::class,
         ];
     }
 
