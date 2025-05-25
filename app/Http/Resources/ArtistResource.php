@@ -23,6 +23,10 @@ class ArtistResource extends JsonResource
             'image_url' => $this->image_url,
             'source' => $this->source?->source,
             'status' => $this->status?->status,
+            'genres' => $this->genres->map(fn($genre) => [
+                'id' => $genre->id,
+                'name' => $genre->genre,
+            ]),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
@@ -35,8 +39,6 @@ class ArtistResource extends JsonResource
      */
     public function with(Request $request): array
     {
-        return [
-            'pivot' => null
-        ];
+        return [];
     }
 }

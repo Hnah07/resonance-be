@@ -23,6 +23,11 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
  *     @OA\Property(property="image_url", type="string", nullable=true, example="https://resonance-be.ddev.site/storage/artists/david-guetta.jpg"),
  *     @OA\Property(property="source", type="string", example="manual"),
  *     @OA\Property(property="status", type="string", example="verified"),
+ *     @OA\Property(property="genres", type="array", @OA\Items(
+ *         type="object",
+ *         @OA\Property(property="id", type="string", format="uuid", example="123e4567-e89b-12d3-a456-426614174000"),
+ *         @OA\Property(property="name", type="string", example="Electronic Dance Music")
+ *     )),
  *     @OA\Property(property="created_at", type="string", format="date-time"),
  *     @OA\Property(property="updated_at", type="string", format="date-time")
  * )
@@ -663,6 +668,155 @@ class ArtistController extends Controller
 
         return response()->json([
             'message' => 'Artist detached from concert successfully'
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/artists/{id}/genres",
+     *     summary="Attach genres to an artist",
+     *     tags={"Artists"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Artist UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"genre_ids"},
+     *             @OA\Property(
+     *                 property="genre_ids",
+     *                 type="array",
+     *                 description="Array of genre UUIDs to attach",
+     *                 @OA\Items(
+     *                     type="string",
+     *                     format="uuid",
+     *                     example="123e4567-e89b-12d3-a456-426614174000"
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Genres attached successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Artist")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Artist not found"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function attachGenres(Request $request, Artist $artist)
+    {
+        $validated = $request->validate([
+            'genre_ids' => 'required|array',
+            'genre_ids.*' => 'required|uuid|exists:genres,id'
+        ]);
+
+        // Generate UUIDs for pivot table entries
+        $pivotData = collect($validated['genre_ids'])->mapWithKeys(function ($genreId) {
+            return [$genreId => ['id' => (string) \Illuminate\Support\Str::uuid()]];
+        })->all();
+
+        $artist->genres()->attach($pivotData);
+        $artist->load('genres');
+
+        return new ArtistResource($artist);
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/artists/{id}/genres/{genreId}",
+     *     summary="Detach a genre from an artist",
+     *     tags={"Artists"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Artist UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="genreId",
+     *         in="path",
+     *         required=true,
+     *         description="Genre UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Genre detached successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/Artist")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Artist or genre not found"
+     *     )
+     * )
+     */
+    public function detachGenre(Artist $artist, string $genreId)
+    {
+        if (!$artist->genres()->where('genre_id', $genreId)->exists()) {
+            return response()->json([
+                'message' => 'Artist does not have this genre'
+            ], 404);
+        }
+
+        $artist->genres()->detach($genreId);
+        $artist->load('genres');
+
+        return new ArtistResource($artist);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/artists/{id}/genres",
+     *     summary="Get all genres for an artist",
+     *     tags={"Artists"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Artist UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of genres for the artist",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="string", format="uuid"),
+     *                     @OA\Property(property="name", type="string")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Artist not found"
+     *     )
+     * )
+     */
+    public function getGenres(Artist $artist)
+    {
+        return response()->json([
+            'data' => $artist->genres->map(fn($genre) => [
+                'id' => $genre->id,
+                'name' => $genre->genre,
+            ])
         ]);
     }
 }

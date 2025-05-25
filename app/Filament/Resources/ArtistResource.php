@@ -17,6 +17,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Carbon\Carbon;
 use App\Filament\Resources\ArtistResource\RelationManagers\ConcertsRelationManager;
+use App\Filament\Resources\ArtistResource\RelationManagers\GenresRelationManager;
 
 class ArtistResource extends Resource
 {
@@ -73,6 +74,12 @@ class ArtistResource extends Resource
                             ->imageEditor()
                             ->directory('artists')
                             ->columnSpanFull(),
+                        Forms\Components\Select::make('genres')
+                            ->relationship('genres', 'genre')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->columnSpanFull(),
                     ])->columns(2),
                 Forms\Components\Section::make('Metadata')
                     ->schema([
@@ -106,6 +113,10 @@ class ArtistResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('formed_year')
                     ->formatStateUsing(fn($state) => $state ? date('Y', strtotime($state)) : null)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('genres.genre')
+                    ->badge()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('source.source')
                     ->badge()
@@ -183,6 +194,10 @@ class ArtistResource extends Resource
                         }
                         return $indicators;
                     }),
+                Tables\Filters\SelectFilter::make('genres')
+                    ->relationship('genres', 'genre')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -199,6 +214,7 @@ class ArtistResource extends Resource
     {
         return [
             'concerts' => ConcertsRelationManager::class,
+            'genres' => GenresRelationManager::class,
         ];
     }
 
