@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\ConcertController;
+use App\Http\Controllers\GenreController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -30,3 +31,6 @@ Route::delete('/artists/{artist}/concerts/{concertId}', [ArtistController::class
 Route::get('/artists/{artist}/genres', [ArtistController::class, 'getGenres']);
 Route::post('/artists/{artist}/genres', [ArtistController::class, 'attachGenres']);
 Route::delete('/artists/{artist}/genres/{genreId}', [ArtistController::class, 'detachGenre']);
+
+// Genre management routes
+Route::apiResource('genres', GenreController::class);
