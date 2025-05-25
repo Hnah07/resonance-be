@@ -51,7 +51,7 @@ class ConcertResource extends Resource
                                 'festival' => 'Festival',
                                 'concert' => 'Concert',
                                 'tour' => 'Tour',
-                                'show' => 'Show',
+                                'clubnight' => 'Club Night',
                                 'other' => 'Other',
                             ]),
                         Forms\Components\Textarea::make('description')
