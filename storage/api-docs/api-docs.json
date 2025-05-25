@@ -400,6 +400,320 @@
                 }
             }
         },
+        "/api/artists/{id}/concerts": {
+            "get": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Get all concerts for an artist",
+                "operationId": "c3d98b6e4eabc69197d47fdf2f86ed29",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Field to sort by",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "date",
+                            "enum": [
+                                "date",
+                                "created_at"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "sort_direction",
+                        "in": "query",
+                        "description": "Sort direction",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "asc",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "description": "Filter concerts from this date",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "description": "Filter concerts until this date",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-12-31"
+                        }
+                    },
+                    {
+                        "name": "location",
+                        "in": "query",
+                        "description": "Filter by location name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "event",
+                        "in": "query",
+                        "description": "Filter by event name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending_approval",
+                                "verified",
+                                "rejected"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of concerts for the artist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Concert"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 75
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string"
+                                                },
+                                                "last": {
+                                                    "type": "string"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Artist not found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Attach an artist to a concert",
+                "operationId": "2c1973a9e7df6118c16f3b4e0be86a19",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "concert_id"
+                                ],
+                                "properties": {
+                                    "concert_id": {
+                                        "type": "string",
+                                        "format": "uuid",
+                                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Artist attached to concert successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Artist attached to concert successfully"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/Concert"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Artist or concert not found"
+                    },
+                    "422": {
+                        "description": "Validation error or artist already attached"
+                    }
+                }
+            }
+        },
+        "/api/artists/{id}/concerts/{concertId}": {
+            "delete": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Detach an artist from a concert",
+                "operationId": "8599905ae024e0806868211e8bff2f5a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "concertId",
+                        "in": "path",
+                        "description": "Concert UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Artist detached from concert successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Artist detached from concert successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Artist or concert not found"
+                    }
+                }
+            }
+        },
         "/api/concerts": {
             "get": {
                 "tags": [
@@ -794,6 +1108,217 @@
                     },
                     "404": {
                         "description": "Concert not found"
+                    }
+                }
+            }
+        },
+        "/api/concerts/{id}/artists": {
+            "get": {
+                "tags": [
+                    "Concerts"
+                ],
+                "summary": "Get all artists for a concert",
+                "operationId": "2e39d4e24910bd264b861600aee09b9f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Concert UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of artists for the concert",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "country": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "formed_year": {
+                                                        "type": "integer",
+                                                        "nullable": true
+                                                    },
+                                                    "image_url": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "source": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Concert not found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Concerts"
+                ],
+                "summary": "Attach an artist to a concert",
+                "operationId": "430efb3747337a1bad5c1e2a2728e612",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Concert UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Arctic Monkeys"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Artist attached successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Artist attached successfully"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Concert not found or artist not found"
+                    },
+                    "422": {
+                        "description": "Validation error or artist already attached"
+                    }
+                }
+            }
+        },
+        "/api/concerts/{id}/artists/{artistId}": {
+            "delete": {
+                "tags": [
+                    "Concerts"
+                ],
+                "summary": "Detach an artist from a concert",
+                "operationId": "273268d28bd3b38db7da600138c15e9c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Concert UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "artistId",
+                        "in": "path",
+                        "description": "Artist UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Artist detached successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Artist detached successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Concert or artist not found"
                     }
                 }
             }

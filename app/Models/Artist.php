@@ -29,7 +29,7 @@ class Artist extends Model
     }
 
     /**
-     * Get the status that owns the artist.
+     * Get the status that the artist has.
      */
     public function status(): BelongsTo
     {
@@ -37,10 +37,15 @@ class Artist extends Model
     }
 
     /**
-     * Get the country that owns the artist.
+     * Get the country that's the origin of the artist.
      */
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
+    }
+    public function concerts()
+    {
+        return $this->belongsToMany(Concert::class)
+            ->withTimestamps();
     }
 }

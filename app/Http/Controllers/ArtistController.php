@@ -7,6 +7,7 @@ use App\Models\Source;
 use App\Models\Status;
 use App\Models\Country;
 use App\Http\Resources\ArtistResource;
+use App\Http\Resources\ConcertResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -372,5 +373,296 @@ class ArtistController extends Controller
     {
         $artist->delete();
         return response()->json(null, 204);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/artists/{id}/concerts",
+     *     summary="Get all concerts for an artist",
+     *     tags={"Artists"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Artist UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="sort_by",
+     *         in="query",
+     *         description="Field to sort by",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"date", "created_at"},
+     *             default="date"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="sort_direction",
+     *         in="query",
+     *         description="Sort direction",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"asc", "desc"},
+     *             default="asc"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="date_from",
+     *         in="query",
+     *         description="Filter concerts from this date",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             format="date",
+     *             example="2024-01-01"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="date_to",
+     *         in="query",
+     *         description="Filter concerts until this date",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             format="date",
+     *             example="2024-12-31"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="location",
+     *         in="query",
+     *         description="Filter by location name",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="event",
+     *         in="query",
+     *         description="Filter by event name",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Filter by status",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"pending_approval", "verified", "rejected"}
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Number of items per page",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=15,
+     *             minimum=1,
+     *             maximum=100
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1,
+     *             minimum=1
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of concerts for the artist",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(ref="#/components/schemas/Concert")
+     *             ),
+     *             @OA\Property(property="meta", type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=5),
+     *                 @OA\Property(property="per_page", type="integer", example=15),
+     *                 @OA\Property(property="to", type="integer", example=15),
+     *                 @OA\Property(property="total", type="integer", example=75)
+     *             ),
+     *             @OA\Property(property="links", type="object",
+     *                 @OA\Property(property="first", type="string"),
+     *                 @OA\Property(property="last", type="string"),
+     *                 @OA\Property(property="prev", type="string", nullable=true),
+     *                 @OA\Property(property="next", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Artist not found"
+     *     )
+     * )
+     */
+    public function getConcerts(Request $request, Artist $artist): AnonymousResourceCollection
+    {
+        $query = $artist->concerts()->with(['event', 'location', 'source', 'status']);
+
+        // Apply filters
+        if ($request->has('date_from')) {
+            $query->where('date', '>=', $request->date_from);
+        }
+
+        if ($request->has('date_to')) {
+            $query->where('date', '<=', $request->date_to);
+        }
+
+        if ($request->has('location')) {
+            $query->whereHas('location', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->location}%");
+            });
+        }
+
+        if ($request->has('event')) {
+            $query->whereHas('event', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->event}%");
+            });
+        }
+
+        if ($request->has('status')) {
+            $query->whereHas('status', function ($q) use ($request) {
+                $q->where('status', $request->status);
+            });
+        }
+
+        // Apply sorting
+        $sortBy = $request->get('sort_by', 'date');
+        $sortDirection = $request->get('sort_direction', 'asc');
+        $query->orderBy($sortBy, $sortDirection);
+
+        // Paginate results
+        $perPage = min($request->get('per_page', 15), 100);
+        $concerts = $query->paginate($perPage);
+
+        return ConcertResource::collection($concerts);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/artists/{id}/concerts",
+     *     summary="Attach an artist to a concert",
+     *     tags={"Artists"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Artist UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"concert_id"},
+     *             @OA\Property(property="concert_id", type="string", format="uuid", example="123e4567-e89b-12d3-a456-426614174000")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Artist attached to concert successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Artist attached to concert successfully"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Concert")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Artist or concert not found"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error or artist already attached"
+     *     )
+     * )
+     */
+    public function attachConcert(Request $request, Artist $artist)
+    {
+        $validated = $request->validate([
+            'concert_id' => 'required|uuid|exists:concerts,id'
+        ]);
+
+        // Check if artist is already attached
+        if ($artist->concerts()->where('concert_id', $validated['concert_id'])->exists()) {
+            return response()->json([
+                'message' => 'Artist is already attached to this concert'
+            ], 422);
+        }
+
+        // Generate a UUID for the pivot table
+        $pivotId = (string) \Illuminate\Support\Str::uuid();
+
+        // Attach with the generated UUID
+        $artist->concerts()->attach($validated['concert_id'], ['id' => $pivotId]);
+
+        $concert = $artist->concerts()->where('concert_id', $validated['concert_id'])->first();
+        $concert->load(['event', 'location', 'source', 'status']);
+
+        return response()->json([
+            'message' => 'Artist attached to concert successfully',
+            'data' => new ConcertResource($concert)
+        ]);
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/artists/{id}/concerts/{concertId}",
+     *     summary="Detach an artist from a concert",
+     *     tags={"Artists"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Artist UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="concertId",
+     *         in="path",
+     *         required=true,
+     *         description="Concert UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Artist detached from concert successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Artist detached from concert successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Artist or concert not found"
+     *     )
+     * )
+     */
+    public function detachConcert(Artist $artist, string $concertId)
+    {
+        // Check if artist is attached
+        if (!$artist->concerts()->where('concert_id', $concertId)->exists()) {
+            return response()->json([
+                'message' => 'Artist is not attached to this concert'
+            ], 404);
+        }
+
+        $artist->concerts()->detach($concertId);
+
+        return response()->json([
+            'message' => 'Artist detached from concert successfully'
+        ]);
     }
 }
