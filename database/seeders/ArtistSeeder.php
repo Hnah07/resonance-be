@@ -61,5 +61,14 @@ class ArtistSeeder extends Seeder
             'source_id' => Source::where('source', 'manual')->first()->id,
             'status_id' => Status::where('status', 'verified')->first()->id,
         ]);
+        Artist::create([
+            'name' => 'Paleface Swiss',
+            'description' => 'Paleface Swiss is Swiss deathcore band.',
+            'country_id' => Country::where('code', 'CH')->first()->id,
+            'formed_year' => '2017',
+            'image_url' => 'https://via.placeholder.com/150',
+            'source_id' => Source::where('source', 'manual')->first()->id,
+            'status_id' => Status::where('status', 'verified')->first()->id,
+        ]);
     }
 }

@@ -88,11 +88,24 @@ class LocationResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status.status')
+                    ->badge()
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->color(fn(string $state): string => match ($state) {
+                        'verified' => 'success',
+                        'pending_approval' => 'warning',
+                        'rejected' => 'danger',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('source.source')
+                    ->badge()
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->color(fn(string $state): string => match ($state) {
+                        'manual' => 'primary',
+                        'api' => 'success',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

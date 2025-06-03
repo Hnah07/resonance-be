@@ -14,6 +14,7 @@ class Genre extends Model
     ];
     public function artists()
     {
-        return $this->belongsToMany(Artist::class);
+        return $this->belongsToMany(Artist::class, 'artist_genres')
+            ->withTimestamps();
     }
 }

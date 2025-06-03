@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Artist extends Model
 {
@@ -43,14 +44,14 @@ class Artist extends Model
     {
         return $this->belongsTo(Country::class);
     }
-    public function concerts()
+    public function concerts(): BelongsToMany
     {
-        return $this->belongsToMany(Concert::class)
+        return $this->belongsToMany(Concert::class, 'artist_concerts')
             ->withTimestamps();
     }
-    public function genres()
+    public function genres(): BelongsToMany
     {
-        return $this->belongsToMany(Genre::class)
+        return $this->belongsToMany(Genre::class, 'artist_genres')
             ->withTimestamps();
     }
 }

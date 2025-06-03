@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,8 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('artist_genre', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+        Schema::create('artist_genres', function (Blueprint $table) {
+            $table->uuid('id')->primary()->default(DB::raw('(UUID())'));
             $table->foreignUuid('artist_id')->constrained('artists');
             $table->foreignUuid('genre_id')->constrained('genres');
             $table->timestamps();
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('artist_genre');
+        Schema::dropIfExists('artist_genres');
     }
 };
