@@ -13,13 +13,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Create test user
         User::factory()->create([
             'name' => 'Test User',
             'username' => 'testuser',
             'email' => 'test@example.com',
             'role' => 'admin',
+        ]);
+
+        // Seed in order of dependencies
+        $this->call([
+            CountrySeeder::class,      // First, as it's independent
+            SourceSeeder::class,       // Independent
+            StatusSeeder::class,       // Independent
+            GenreSeeder::class,        // Independent
+            ArtistSeeder::class,       // Depends on Country, Source, Status
+            LocationSeeder::class,     // Depends on Country, Source, Status
+            EventSeeder::class,        // Depends on Source, Status
+            ConcertSeeder::class,      // Depends on Event, Location, Source, Status
+            ArtistConcertSeeder::class, // Depends on Artist, Concert
+            ArtistGenreSeeder::class, // Depends on Artist, Genre
         ]);
     }
 }

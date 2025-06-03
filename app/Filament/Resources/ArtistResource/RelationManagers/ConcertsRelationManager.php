@@ -63,6 +63,7 @@ class ConcertsRelationManager extends RelationManager
                         'future' => 'Future Concerts',
                         'all' => 'All Concerts',
                     ])
+                    ->default('all')
                     ->query(function (Builder $query, array $data): Builder {
                         return match ($data['value']) {
                             'past' => $query->where('date', '<', Carbon::today()),
@@ -73,15 +74,6 @@ class ConcertsRelationManager extends RelationManager
                 SelectFilter::make('status')
                     ->relationship('status', 'status')
                     ->preload(),
-            ])
-            ->headerActions([
-                Tables\Actions\AttachAction::make()
-                    ->preloadRecordSelect()
-                    ->recordSelectSearchColumns(['event.name', 'location.name', 'date'])
-                    ->recordSelectOptionsQuery(fn(Builder $query) => $query->where('date', '>=', Carbon::today()))
-                    ->form(fn(Tables\Actions\AttachAction $action): array => [
-                        $action->getRecordSelect(),
-                    ]),
             ])
             ->actions([
                 Tables\Actions\DetachAction::make(),

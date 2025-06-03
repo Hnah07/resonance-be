@@ -214,7 +214,7 @@ class ArtistResource extends Resource
     {
         return [
             'concerts' => ConcertsRelationManager::class,
-            'genres' => GenresRelationManager::class,
+            // 'genres' => GenresRelationManager::class,
         ];
     }
 
