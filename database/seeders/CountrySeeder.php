@@ -14,7 +14,6 @@ class CountrySeeder extends Seeder
      */
     public function run(): void
     {
-        Country::truncate();
 
         $files = File::files(base_path('vendor/rinvex/countries/resources/data'));
 
