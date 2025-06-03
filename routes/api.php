@@ -16,6 +16,7 @@ Route::apiResource('events', EventController::class)->only(['index', 'store', 's
 Route::apiResource('locations', LocationController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::apiResource('artists', ArtistController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
 Route::apiResource('concerts', ConcertController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+Route::apiResource('genres', GenreController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
 
 // Concert artist management routes
 Route::get('/concerts/{concert}/artists', [ConcertController::class, 'getArtists']);
@@ -31,6 +32,3 @@ Route::delete('/artists/{artist}/concerts/{concertId}', [ArtistController::class
 Route::get('/artists/{artist}/genres', [ArtistController::class, 'getGenres']);
 Route::post('/artists/{artist}/genres', [ArtistController::class, 'attachGenres']);
 Route::delete('/artists/{artist}/genres/{genreId}', [ArtistController::class, 'detachGenre']);
-
-// Genre management routes
-Route::apiResource('genres', GenreController::class);
