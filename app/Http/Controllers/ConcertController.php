@@ -115,6 +115,27 @@ class ConcertController extends Controller
      *         )
      *     ),
      *     @OA\Parameter(
+     *         name="genre_ids",
+     *         in="query",
+     *         description="Filter by genre IDs (comma-separated). If filter_mode=all, all artists must have all genres. If filter_mode=any, any artist must have any of the genres.",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             example="123e4567-e89b-12d3-a456-426614174000,987fcdeb-51a2-43d7-9012-345678901234"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="filter_mode",
+     *         in="query",
+     *         description="Filter mode for genres. 'all' requires all artists to have all genres, 'any' includes concerts where any artist has any of the genres.",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"all", "any"},
+     *             default="any"
+     *         )
+     *     ),
+     *     @OA\Parameter(
      *         name="per_page",
      *         in="query",
      *         description="Number of items per page",
@@ -192,6 +213,26 @@ class ConcertController extends Controller
             $query->whereHas('status', function ($q) use ($request) {
                 $q->where('status', $request->status);
             });
+        }
+
+        // Apply genre filtering
+        if ($request->has('genre_ids')) {
+            $genreIds = explode(',', $request->genre_ids);
+            $filterMode = $request->get('filter_mode', 'any');
+
+            if ($filterMode === 'all') {
+                // AND condition: All artists must have all genres
+                $query->whereHas('artists', function ($q) use ($genreIds) {
+                    $q->whereHas('genres', function ($q) use ($genreIds) {
+                        $q->whereIn('genres.id', $genreIds);
+                    });
+                }, '>=', count($genreIds));
+            } else {
+                // OR condition: Any artist must have any of the genres
+                $query->whereHas('artists.genres', function ($q) use ($genreIds) {
+                    $q->whereIn('genres.id', $genreIds);
+                });
+            }
         }
 
         // Apply sorting
