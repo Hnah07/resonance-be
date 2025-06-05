@@ -20,6 +20,7 @@ class ConcertResource extends JsonResource
                 'id' => $this->event->id,
                 'name' => $this->event->name,
                 'type' => $this->event->type,
+                'image' => $this->event->image_url ?? null,
             ],
             'location' => [
                 'id' => $this->location->id,
@@ -27,6 +28,15 @@ class ConcertResource extends JsonResource
                 'city' => $this->location->city,
                 'country' => $this->location->country->name,
             ],
+            'artists' => $this->artists->map(fn($artist) => [
+                'id' => $artist->id,
+                'name' => $artist->name,
+                'image' => $artist->image_url ?? null,
+                'genres' => $artist->genres->map(fn($genre) => [
+                    'id' => $genre->id,
+                    'name' => $genre->genre,
+                ]),
+            ]),
             'date' => $this->date,
             'source' => $this->source->source,
             'status' => $this->status->status,

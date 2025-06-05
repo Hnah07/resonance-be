@@ -165,7 +165,7 @@ class ConcertController extends Controller
      */
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Concert::with(['event', 'location', 'source', 'status']);
+        $query = Concert::with(['event', 'location', 'source', 'status', 'artists.genres']);
 
         // Apply filters
         if ($request->has('date_from')) {
