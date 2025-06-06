@@ -15,6 +15,252 @@
         }
     ],
     "paths": {
+        "/api/artist-checkins": {
+            "get": {
+                "tags": [
+                    "Artist Checkins"
+                ],
+                "summary": "Get all artist check-ins",
+                "operationId": "3d7bb97360d1c1dd45d9307aac331418",
+                "responses": {
+                    "200": {
+                        "description": "List of all artist check-ins",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "artist": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "checkin": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "concert_id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "user_id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Artist Checkins"
+                ],
+                "summary": "Create a new artist check-in",
+                "operationId": "e96bd0e8be6dadd9e24e79eac83ddfe3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "checkin_id",
+                                    "artist_id"
+                                ],
+                                "properties": {
+                                    "checkin_id": {
+                                        "description": "ID of the check-in",
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "artist_id": {
+                                        "description": "ID of the artist",
+                                        "type": "string",
+                                        "format": "uuid"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Artist check-in created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Artist check-in created successfully"
+                                        },
+                                        "artist_checkin": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "checkin_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "artist_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "403": {
+                        "description": "Unauthorized - User can only add artist check-ins to their own check-ins"
+                    }
+                }
+            }
+        },
+        "/api/artist-checkins/{id}": {
+            "get": {
+                "tags": [
+                    "Artist Checkins"
+                ],
+                "summary": "Get a specific artist check-in",
+                "operationId": "a1e747f2e06e5ebb8c09b03f2d13a957",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist check-in UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Artist check-in details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "artist": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "checkin": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "concert_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "user_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Artist check-in not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Artist Checkins"
+                ],
+                "summary": "Delete an artist check-in",
+                "operationId": "d5b7d5defb764b767e8c4011b352c8e6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Artist check-in UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Artist check-in deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized - User can only delete their own artist check-ins"
+                    },
+                    "404": {
+                        "description": "Artist check-in not found"
+                    }
+                }
+            }
+        },
         "/api/artists": {
             "get": {
                 "tags": [
@@ -874,6 +1120,1167 @@
                 }
             }
         },
+        "/api/checkin-comments": {
+            "get": {
+                "tags": [
+                    "Checkin Comments"
+                ],
+                "summary": "Get all comments for a checkin",
+                "operationId": "11a3413597aa4f29d885f53b03b4dfb5",
+                "parameters": [
+                    {
+                        "name": "checkin_id",
+                        "in": "query",
+                        "description": "ID of the checkin to get comments for",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of comments retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "checkin_id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "user_id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "comment": {
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "user": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid checkin ID provided"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Checkin Comments"
+                ],
+                "summary": "Create a new comment on a checkin",
+                "operationId": "878acbf25447c0aac2d2e42487f71a5c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "checkin_id",
+                                    "comment"
+                                ],
+                                "properties": {
+                                    "checkin_id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "comment": {
+                                        "type": "string",
+                                        "maxLength": 1000,
+                                        "minLength": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Comment created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "checkin_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "user_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "comment": {
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/checkin-comments/{id}": {
+            "get": {
+                "tags": [
+                    "Checkin Comments"
+                ],
+                "summary": "Get a specific comment",
+                "operationId": "e758af3ffaede77f96a8e7ac51d7424b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Comment ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "checkin_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "user_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "comment": {
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Checkin Comments"
+                ],
+                "summary": "Update a comment",
+                "operationId": "aa3d896e8adbb6da8d338c378c2f7b3b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Comment ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "comment"
+                                ],
+                                "properties": {
+                                    "comment": {
+                                        "type": "string",
+                                        "maxLength": 1000,
+                                        "minLength": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comment updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "checkin_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "user_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "comment": {
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized to update this comment"
+                    },
+                    "404": {
+                        "description": "Comment not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Checkin Comments"
+                ],
+                "summary": "Delete a comment",
+                "operationId": "446c6e444277c083502e4625a287c661",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Comment ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Comment deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized to delete this comment"
+                    },
+                    "404": {
+                        "description": "Comment not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/checkins": {
+            "get": {
+                "tags": [
+                    "Checkins"
+                ],
+                "summary": "Get all check-ins",
+                "operationId": "6f00e3d42adc0b6286723cba1cbce994",
+                "responses": {
+                    "200": {
+                        "description": "List of all check-ins",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "concert_id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "user_id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "concert": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "date": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "user": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Checkins"
+                ],
+                "summary": "Create a new check-in",
+                "operationId": "7fb8a2ab9b377effb22fa0e2a15e67fa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "concert_id"
+                                ],
+                                "properties": {
+                                    "concert_id": {
+                                        "description": "ID of the concert to check in to",
+                                        "type": "string",
+                                        "format": "uuid"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Check-in created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "concert_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "user_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/checkins/{id}": {
+            "get": {
+                "tags": [
+                    "Checkins"
+                ],
+                "summary": "Get a specific check-in",
+                "operationId": "37ff3444ffc47eac70f227d9bb2f9e27",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Check-in UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Check-in details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "concert_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "user_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "concert": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "date": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Check-in not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Checkins"
+                ],
+                "summary": "Delete a check-in",
+                "operationId": "1d1071122733ba2bfe9316baa7165a50",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Check-in UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Check-in deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Check-in not found"
+                    }
+                }
+            }
+        },
+        "/api/checkin-likes": {
+            "get": {
+                "tags": [
+                    "Checkin Likes"
+                ],
+                "summary": "Get all likes for a checkin",
+                "operationId": "216d88c5629d9c16538bb28470bf7ddb",
+                "parameters": [
+                    {
+                        "name": "checkin_id",
+                        "in": "query",
+                        "description": "ID of the checkin to get likes for",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of likes for the checkin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "checkin_id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "user_id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "user": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Checkin not found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Checkin Likes"
+                ],
+                "summary": "Like a checkin",
+                "operationId": "0850d36cd1e548561d406316aed874c5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "checkin_id"
+                                ],
+                                "properties": {
+                                    "checkin_id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Like created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Checkin liked successfully"
+                                        },
+                                        "like": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "checkin_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "user_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "404": {
+                        "description": "Checkin not found"
+                    },
+                    "409": {
+                        "description": "Already liked"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/checkin-likes/{checkinLike}": {
+            "delete": {
+                "tags": [
+                    "Checkin Likes"
+                ],
+                "summary": "Unlike a checkin",
+                "operationId": "5c3122f0062de093193cec4ef6a6dbf5",
+                "parameters": [
+                    {
+                        "name": "checkinLike",
+                        "in": "path",
+                        "description": "UUID of the like to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Like removed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Like removed successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Like not found"
+                    },
+                    "403": {
+                        "description": "Unauthorized to remove this like"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/checkin-photos": {
+            "get": {
+                "tags": [
+                    "Checkin Photos"
+                ],
+                "summary": "Get all checkin photos",
+                "operationId": "4cdcef8dccb0de0d76ec5c05568b7dfa",
+                "responses": {
+                    "200": {
+                        "description": "List of checkin photos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "checkin_id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "url": {
+                                                "type": "string"
+                                            },
+                                            "caption": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Checkin Photos"
+                ],
+                "summary": "Create a new checkin photo",
+                "operationId": "e464a22de86379318089da6a81797c7f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "checkin_id",
+                                    "url"
+                                ],
+                                "properties": {
+                                    "checkin_id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "url": {
+                                        "type": "string"
+                                    },
+                                    "caption": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Photo created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "checkin_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "url": {
+                                                    "type": "string"
+                                                },
+                                                "caption": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/checkin-photos/{id}": {
+            "get": {
+                "tags": [
+                    "Checkin Photos"
+                ],
+                "summary": "Get a specific checkin photo",
+                "operationId": "f1ad234186798909fe40bc51c20577cc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "UUID of the checkin photo",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Checkin photo details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "checkin_id": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        },
+                                        "url": {
+                                            "type": "string"
+                                        },
+                                        "caption": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Photo not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Checkin Photos"
+                ],
+                "summary": "Update a checkin photo",
+                "operationId": "03fb5fad069a9b55a6211a86e9072134",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "UUID of the checkin photo",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "url": {
+                                        "type": "string"
+                                    },
+                                    "caption": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Photo updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "checkin_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "url": {
+                                                    "type": "string"
+                                                },
+                                                "caption": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "404": {
+                        "description": "Photo not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Checkin Photos"
+                ],
+                "summary": "Delete a checkin photo",
+                "operationId": "e2c29041be0b7f384f06c6d3b1eea891",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "UUID of the checkin photo",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Photo deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Photo not found"
+                    }
+                }
+            }
+        },
         "/api/concerts": {
             "get": {
                 "tags": [
@@ -961,6 +2368,30 @@
                                 "pending_approval",
                                 "verified",
                                 "rejected"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "genre_ids",
+                        "in": "query",
+                        "description": "Filter by genre IDs (comma-separated). If filter_mode=all, all artists must have all genres. If filter_mode=any, any artist must have any of the genres.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123e4567-e89b-12d3-a456-426614174000,987fcdeb-51a2-43d7-9012-345678901234"
+                        }
+                    },
+                    {
+                        "name": "filter_mode",
+                        "in": "query",
+                        "description": "Filter mode for genres. 'all' requires all artists to have all genres, 'any' includes concerts where any artist has any of the genres.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "any",
+                            "enum": [
+                                "all",
+                                "any"
                             ]
                         }
                     },
@@ -1985,6 +3416,288 @@
                     },
                     "404": {
                         "description": "Event not found"
+                    }
+                }
+            }
+        },
+        "/api/followers": {
+            "get": {
+                "tags": [
+                    "Followers"
+                ],
+                "summary": "Get all followers",
+                "operationId": "37c2ff27aa85f457648ddfe5b74d1a46",
+                "responses": {
+                    "200": {
+                        "description": "List of all followers",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "follower": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "profile_photo_path": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "followed": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "profile_photo_path": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Followers"
+                ],
+                "summary": "Follow a user",
+                "operationId": "71528fa701e18b546c8ab6979ee1fc01",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "followed_id"
+                                ],
+                                "properties": {
+                                    "followed_id": {
+                                        "description": "ID of the user to follow",
+                                        "type": "string",
+                                        "format": "uuid"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successfully followed user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully followed user"
+                                        },
+                                        "follower": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "409": {
+                        "description": "Already following this user"
+                    }
+                }
+            }
+        },
+        "/api/followers/{id}": {
+            "delete": {
+                "tags": [
+                    "Followers"
+                ],
+                "summary": "Unfollow a user",
+                "operationId": "a89ad10b2b31447e85eecda21819ca58",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User UUID to unfollow",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successfully unfollowed user"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Follow relationship not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{id}/followers": {
+            "get": {
+                "tags": [
+                    "Followers"
+                ],
+                "summary": "Get a user's followers",
+                "operationId": "819668fa1af997af4920b9cacee84b96",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of user's followers",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "username": {
+                                                "type": "string"
+                                            },
+                                            "profile_photo_path": {
+                                                "type": "string",
+                                                "nullable": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{id}/following": {
+            "get": {
+                "tags": [
+                    "Followers"
+                ],
+                "summary": "Get users that a user is following",
+                "operationId": "effc90bb8888e86e2a39cb04a138ec11",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of users being followed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "format": "uuid"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "username": {
+                                                "type": "string"
+                                            },
+                                            "profile_photo_path": {
+                                                "type": "string",
+                                                "nullable": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
                     }
                 }
             }
@@ -3121,8 +4834,28 @@
     },
     "tags": [
         {
+            "name": "Artist Checkins",
+            "description": "API Endpoints for managing artist check-ins"
+        },
+        {
             "name": "Artists",
             "description": "API Endpoints for managing artists"
+        },
+        {
+            "name": "Checkin Comments",
+            "description": "API Endpoints for managing checkin comments"
+        },
+        {
+            "name": "Checkins",
+            "description": "API Endpoints for managing concert check-ins"
+        },
+        {
+            "name": "Checkin Likes",
+            "description": "API Endpoints for managing checkin likes"
+        },
+        {
+            "name": "Checkin Photos",
+            "description": "API Endpoints for managing checkin photos"
         },
         {
             "name": "Concerts",
@@ -3131,6 +4864,10 @@
         {
             "name": "Events",
             "description": "API Endpoints for managing events"
+        },
+        {
+            "name": "Followers",
+            "description": "API Endpoints for managing user follows"
         },
         {
             "name": "Genres",

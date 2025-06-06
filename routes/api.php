@@ -8,6 +8,9 @@ use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\ConcertController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FollowerController;
+use App\Http\Controllers\CheckinController;
+
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -27,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('artists', ArtistController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::apiResource('concerts', ConcertController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::apiResource('genres', GenreController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
+    Route::apiResource('checkins', CheckinController::class)->only(['index', 'store', 'show', 'destroy']);
+    Route::apiResource('followers', FollowerController::class)->only(['index', 'store', 'destroy']);
 
     // Concert artist management routes
     Route::get('/concerts/{concert}/artists', [ConcertController::class, 'getArtists']);

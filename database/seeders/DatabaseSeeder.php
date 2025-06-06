@@ -33,6 +33,10 @@ class DatabaseSeeder extends Seeder
             ConcertSeeder::class,      // Depends on Event, Location, Source, Status
             ArtistConcertSeeder::class, // Depends on Artist, Concert
             ArtistGenreSeeder::class, // Depends on Artist, Genre
+            FollowerSeeder::class,     // Depends on User
+            CheckinSeeder::class,      // Depends on User, Concert
+            ArtistCheckinSeeder::class, // Depends on Artist, Checkin
+            CheckinPhotoSeeder::class, // Depends on Checkin
         ]);
     }
 }
