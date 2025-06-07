@@ -81,4 +81,25 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->role === 'admin';
     }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'followed_id', 'follower_id');
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'followed_id');
+    }
+
+    public function likedCheckins()
+    {
+        return $this->belongsToMany(Checkin::class, 'checkin_likes')
+            ->withTimestamps();
+    }
+
+    public function checkins()
+    {
+        return $this->hasMany(Checkin::class);
+    }
 }

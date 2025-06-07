@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
+use Laravel\Jetstream\HasProfilePhoto;
 
 class UserResource extends Resource
 {
@@ -23,35 +25,61 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('username')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('role')
-                    ->options([
-                        'admin' => 'Admin',
-                        'super user' => 'Super User',
-                        'user' => 'User',
-                    ])
-                    ->required(),
-                Forms\Components\Toggle::make('is_active')
-                    ->label('Active')
-                    ->default(true),
-                Forms\Components\Textarea::make('bio')
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('longitude')
-                    ->numeric()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('latitude')
-                    ->numeric()
-                    ->maxLength(255),
+                Forms\Components\Section::make('User Details')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('username')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\FileUpload::make('profile_photo_path')
+                            ->label('Upload a profile photo')
+                            ->image()
+                            ->imageEditor()
+                            ->directory('profile-photos')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->preserveFilenames()
+                            ->imagePreviewHeight('250')
+                            ->panelAspectRatio('2:1')
+                            ->panelLayout('integrated')
+                            ->afterStateUpdated(function ($state, $record) {
+                                if ($record && $state) {
+                                    $record->updateProfilePhoto($state);
+                                }
+                            })
+                            ->deleteUploadedFileUsing(function ($file, $record) {
+                                if ($record) {
+                                    $record->deleteProfilePhoto();
+                                }
+                                Storage::disk('public')->delete($file);
+                            })
+                            ->columnSpanFull(),
+                        Forms\Components\Select::make('role')
+                            ->options([
+                                'admin' => 'Admin',
+                                'super user' => 'Super User',
+                                'user' => 'User',
+                            ])
+                            ->required(),
+                        Forms\Components\Toggle::make('is_active')
+                            ->label('Active')
+                            ->default(true),
+                        Forms\Components\Textarea::make('bio')
+                            ->maxLength(65535)
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('longitude')
+                            ->numeric()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('latitude')
+                            ->numeric()
+                            ->maxLength(255),
+                    ])->columns(2),
             ]);
     }
 
@@ -59,6 +87,9 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('profile_photo_url')
+                    ->square()
+                    ->defaultImageUrl(url('/images/placeholder.jpg')),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('username')
