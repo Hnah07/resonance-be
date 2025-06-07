@@ -10,6 +10,8 @@ class CheckinsChart extends ChartWidget
 {
     protected static ?string $heading = 'Check-ins per month in 2025';
 
+    protected static ?int $sort = 2;
+
     protected function getData(): array
     {
         $checkins = Checkin::query()
@@ -20,18 +22,18 @@ class CheckinsChart extends ChartWidget
             ->get();
 
         $months = [
-            1 => 'January',
-            2 => 'February',
-            3 => 'March',
-            4 => 'April',
+            1 => 'Jan',
+            2 => 'Feb',
+            3 => 'Mar',
+            4 => 'Apr',
             5 => 'May',
-            6 => 'June',
-            7 => 'July',
-            8 => 'August',
-            9 => 'September',
-            10 => 'October',
-            11 => 'November',
-            12 => 'December'
+            6 => 'Jun',
+            7 => 'Jul',
+            8 => 'Aug',
+            9 => 'Sep',
+            10 => 'Oct',
+            11 => 'Nov',
+            12 => 'Dec'
         ];
 
         $data = array_fill(0, 12, 0); // Initialize array with zeros for all months
