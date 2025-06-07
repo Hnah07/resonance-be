@@ -44,7 +44,8 @@ class Checkin extends Model
     public function likedByUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'checkin_likes')
-            ->withTimestamps();
+            ->withTimestamps()
+            ->using(CheckinLike::class);
     }
 
     public function comments(): HasMany

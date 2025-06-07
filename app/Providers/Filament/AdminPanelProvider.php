@@ -27,8 +27,14 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('Resonance')
+            ->brandLogo(asset('logo-resonance-transparant.png'))
+            ->maxContentWidth('full')
+            ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('16rem')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Cyan,
+                'secondary' => Color::Pink,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

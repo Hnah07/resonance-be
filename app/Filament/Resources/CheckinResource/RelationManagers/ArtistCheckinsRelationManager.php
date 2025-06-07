@@ -18,8 +18,8 @@ class ArtistCheckinsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('artist_id')
-                    ->relationship('artist', 'name')
+                Forms\Components\Select::make('id')
+                    ->relationship('artists', 'name')
                     ->searchable()
                     ->preload()
                     ->required()

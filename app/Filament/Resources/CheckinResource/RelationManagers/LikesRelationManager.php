@@ -18,12 +18,15 @@ class LikesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'username')
+                Forms\Components\Select::make('id')
+                    ->relationship('users', 'username')
                     ->searchable()
                     ->preload()
                     ->required()
-                    ->label('User'),
+                    ->label('User')
+                    ->getOptionLabelFromRecordUsing(
+                        fn($record) => "{$record->username} ({$record->name})"
+                    ),
             ]);
     }
 

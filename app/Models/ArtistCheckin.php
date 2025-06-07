@@ -9,6 +9,8 @@ class ArtistCheckin extends Pivot
 {
     use HasUuids;
 
+    protected $table = 'artist_checkins';
+
     protected $fillable = ['artist_id', 'checkin_id'];
 
     protected static function boot()

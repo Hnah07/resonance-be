@@ -19,7 +19,7 @@ class CheckinResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-check-circle';
 
-    protected static ?string $navigationGroup = 'Social Management';
+    protected static ?string $navigationGroup = 'Check-ins';
 
     protected static ?int $navigationSort = 1;
 
