@@ -16,9 +16,10 @@ class ArtistCheckinSeeder extends Seeder
      */
     public function run(): void
     {
+
         ArtistCheckin::create([
-            'artist_id' => Artist::where('name', 'The Beatles')->first()->id,
-            'checkin_id' => Checkin::where('user_id', User::where('email', 'casier07@hotmail.com')->first()->id)->first()->id,
+            'artist_id' => Artist::where('name', 'Paleface Swiss')->first()->id,
+            'checkin_id' => Checkin::where('user_id', User::where('email', 'admin@r.be')->first()->id)->first()->id,
         ]);
     }
 }

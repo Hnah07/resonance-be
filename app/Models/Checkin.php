@@ -11,7 +11,15 @@ class Checkin extends Model
 {
     use HasUuids;
 
-    protected $fillable = ['concert_id', 'user_id'];
+    protected $fillable = [
+        'concert_id',
+        'user_id',
+        'artists',
+    ];
+
+    protected $casts = [
+        'artists' => 'array',
+    ];
 
     public function concert()
     {
@@ -42,5 +50,34 @@ class Checkin extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(CheckinComment::class);
+    }
+
+    public function artistCheckins(): HasMany
+    {
+        return $this->hasMany(ArtistCheckin::class);
+    }
+
+    public function artists(): BelongsToMany
+    {
+        return $this->belongsToMany(Artist::class, 'artist_checkins')
+            ->withTimestamps()
+            ->using(ArtistCheckin::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function ($checkin) {
+            if (request()->has('artists')) {
+                // First detach all existing artists
+                $checkin->artists()->detach();
+
+                // Then attach the new artists one by one
+                foreach (request()->input('artists') as $artistId) {
+                    $checkin->artists()->attach($artistId);
+                }
+            }
+        });
     }
 }
