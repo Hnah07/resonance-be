@@ -11,6 +11,18 @@ class Follower extends Model
     use HasUuids;
     protected $fillable = ['follower_id', 'followed_id'];
 
+    // The user who is following
+    public function follower()
+    {
+        return $this->belongsTo(User::class, 'follower_id');
+    }
+
+    // The user being followed
+    public function followed()
+    {
+        return $this->belongsTo(User::class, 'followed_id');
+    }
+
     // Users that the current user follows
     public function followings()
     {
