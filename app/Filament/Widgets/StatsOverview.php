@@ -16,7 +16,7 @@ class StatsOverview extends BaseWidget
             Stat::make('Total Users', User::count())
                 ->description('Total number of registered users')
                 ->descriptionIcon('heroicon-m-users')
-                ->color('success'),
+                ->color('secondary'),
             Stat::make('Total Artists', Artist::count())
                 ->description('Total number of artists')
                 ->descriptionIcon('heroicon-m-musical-note')
@@ -24,7 +24,7 @@ class StatsOverview extends BaseWidget
             Stat::make('Total Events', Event::count())
                 ->description('Total number of events')
                 ->descriptionIcon('heroicon-m-calendar')
-                ->color('info'),
+                ->color('primary'),
         ];
     }
 }
