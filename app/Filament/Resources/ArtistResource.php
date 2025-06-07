@@ -18,6 +18,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Carbon\Carbon;
 use App\Filament\Resources\ArtistResource\RelationManagers\ConcertsRelationManager;
 use App\Filament\Resources\ArtistResource\RelationManagers\GenresRelationManager;
+use Illuminate\Support\Facades\Storage;
 
 class ArtistResource extends Resource
 {
@@ -70,9 +71,19 @@ class ArtistResource extends Resource
                             ->native(false)
                             ->columnSpan(1),
                         Forms\Components\FileUpload::make('image_url')
+                            ->label('Upload a photo')
                             ->image()
                             ->imageEditor()
                             ->directory('artists')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->imagePreviewHeight('250')
+                            ->panelAspectRatio('2:1')
+                            ->panelLayout('integrated')
+                            ->deleteUploadedFileUsing(function ($file) {
+                                Storage::disk('public')->delete($file);
+                            })
+                            ->default(fn($record) => $record?->getRawOriginal('image_url'))
                             ->columnSpanFull(),
                         Forms\Components\Select::make('genres')
                             ->relationship('genres', 'genre')
@@ -103,7 +114,18 @@ class ArtistResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')
                     ->square()
-                    ->defaultImageUrl(url('/images/placeholder.jpg')),
+                    ->defaultImageUrl('https://placehold.co/600x400?text=No+Artist+Image')
+                    ->disk('public')
+                    ->visibility('public')
+                    ->getStateUsing(function ($record) {
+                        if (empty($record->image_url)) {
+                            return 'https://placehold.co/600x400?text=No+Artist+Image';
+                        }
+                        if (str_starts_with($record->image_url, 'http')) {
+                            return $record->image_url;
+                        }
+                        return asset('storage/' . $record->image_url);
+                    }),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable()

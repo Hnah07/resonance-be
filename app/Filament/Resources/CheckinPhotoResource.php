@@ -57,6 +57,7 @@ class CheckinPhotoResource extends Resource
                             )
                             ->label('Check-in'),
                         Forms\Components\FileUpload::make('url')
+                            ->label('Upload a photo')
                             ->image()
                             ->imageEditor()
                             ->directory('checkin-photos')
@@ -80,7 +81,12 @@ class CheckinPhotoResource extends Resource
                     ->defaultImageUrl(url('/images/placeholder.jpg'))
                     ->disk('public')
                     ->visibility('public')
-                    ->url(fn(string $state): string => url("storage/{$state}")),
+                    ->getStateUsing(function ($record) {
+                        if (str_starts_with($record->url, 'http')) {
+                            return $record->url;
+                        }
+                        return asset('storage/' . $record->url);
+                    }),
                 Tables\Columns\TextColumn::make('caption')
                     ->searchable()
                     ->sortable()

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class EventResource extends Resource
 {
@@ -90,10 +91,21 @@ class EventResource extends Resource
                             ]),
 
                         Forms\Components\FileUpload::make('image_url')
+                            ->label('Upload a photo')
                             ->image()
                             ->imageEditor()
                             ->directory('events')
-                            ->columnSpanFull(),
+                            ->disk('public')
+                            ->visibility('public')
+                            ->preserveFilenames()
+                            ->imagePreviewHeight('250')
+                            ->panelAspectRatio('2:1')
+                            ->panelLayout('integrated')
+                            ->deleteUploadedFileUsing(function ($file) {
+                                Storage::disk('public')->delete($file);
+                            })
+                            ->default(fn($record) => $record?->getRawOriginal('image_url'))
+                            ->required(),
 
                         Forms\Components\Select::make('source')
                             ->relationship('source', 'source')
@@ -117,7 +129,10 @@ class EventResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')
                     ->square()
-                    ->defaultImageUrl(url('/images/placeholder.jpg')),
+                    ->defaultImageUrl(url('/images/placeholder.jpg'))
+                    ->disk('public')
+                    ->visibility('public')
+                    ->url(fn($record) => $record->image_url ? asset('storage/' . $record->image_url) : null),
 
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()

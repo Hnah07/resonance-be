@@ -94,10 +94,14 @@ class CheckinResource extends Resource
                             ->relationship('photos')
                             ->schema([
                                 Forms\Components\FileUpload::make('url')
+                                    ->label('Upload a photo')
                                     ->image()
                                     ->imageEditor()
-                                    ->directory('checkins')
-                                    ->required(),
+                                    ->directory('checkin-photos')
+                                    ->disk('public')
+                                    ->visibility('public')
+                                    ->required()
+                                    ->columnSpanFull(),
                                 Forms\Components\TextInput::make('caption')
                                     ->maxLength(255),
                             ])
@@ -139,6 +143,8 @@ class CheckinResource extends Resource
                     ->stacked()
                     ->limit(3)
                     ->square()
+                    ->disk('public')
+                    ->visibility('public')
                     ->label('Photos'),
                 Tables\Columns\TextColumn::make('likes_count')
                     ->counts('likes')
