@@ -13,8 +13,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            // Drop old columns
-            $table->dropColumn(['longitude', 'latitude']);
+            // Drop old columns if they exist
+            if (Schema::hasColumn('users', 'longitude')) {
+                $table->dropColumn('longitude');
+            }
+            if (Schema::hasColumn('users', 'latitude')) {
+                $table->dropColumn('latitude');
+            }
 
             // Add new columns if they don't exist
             if (!Schema::hasColumn('users', 'city')) {
