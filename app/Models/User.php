@@ -38,8 +38,8 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'is_active',
         'bio',
-        'longitude',
-        'latitude',
+        'city',
+        'country',
     ];
 
     /**

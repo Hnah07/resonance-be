@@ -64,6 +64,14 @@ class CheckinResource extends Resource
                                     date('d/m/Y', strtotime($record->date))
                             )
                             ->live(),
+                        Forms\Components\TextInput::make('rating.rating')
+                            ->numeric()
+                            ->minValue(0.5)
+                            ->maxValue(5.0)
+                            ->step(0.5)
+                            ->nullable()
+                            ->label('Rating')
+                            ->helperText('Rate the concert from 0.5 to 5.0 in 0.5 increments'),
                         Forms\Components\Select::make('artists')
                             ->relationship('artists', 'name')
                             ->multiple()
@@ -100,10 +108,11 @@ class CheckinResource extends Resource
                                     ->directory('checkin-photos')
                                     ->disk('public')
                                     ->visibility('public')
-                                    ->required()
+                                    ->nullable()
                                     ->columnSpanFull(),
                                 Forms\Components\TextInput::make('caption')
-                                    ->maxLength(255),
+                                    ->maxLength(255)
+                                    ->nullable(),
                             ])
                             ->columns(2)
                             ->defaultItems(0)
@@ -134,6 +143,10 @@ class CheckinResource extends Resource
                     ->date()
                     ->sortable()
                     ->label('Date'),
+                Tables\Columns\TextColumn::make('rating.rating')
+                    ->numeric()
+                    ->sortable()
+                    ->label('Rating'),
                 Tables\Columns\TextColumn::make('artists.name')
                     ->badge()
                     ->searchable()

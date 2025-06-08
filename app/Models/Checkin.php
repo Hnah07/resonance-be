@@ -14,12 +14,9 @@ class Checkin extends Model
     protected $fillable = [
         'concert_id',
         'user_id',
-        'artists',
     ];
 
-    protected $casts = [
-        'artists' => 'array',
-    ];
+    protected $casts = [];
 
     public function concert()
     {
@@ -63,6 +60,11 @@ class Checkin extends Model
         return $this->belongsToMany(Artist::class, 'artist_checkins')
             ->withTimestamps()
             ->using(ArtistCheckin::class);
+    }
+
+    public function rating()
+    {
+        return $this->hasOne(CheckinRating::class);
     }
 
     protected static function boot()
