@@ -20,21 +20,24 @@ return new class extends Migration
             if (!Schema::hasColumn('users', 'city')) {
                 $table->string('city')->nullable();
             }
+        });
 
-            // Change country to country_id
-            if (Schema::hasColumn('users', 'country')) {
-                // First, create the new column
-                $table->foreignUuid('country_id')->nullable()->after('city')->constrained('countries');
-
-                // Migrate existing data
-                DB::statement('UPDATE users SET country_id = (SELECT id FROM countries WHERE name = users.country LIMIT 1)');
-
-                // Drop the old column
-                $table->dropColumn('country');
-            } else if (!Schema::hasColumn('users', 'country_id')) {
+        // Create country_id column first
+        Schema::table('users', function (Blueprint $table) {
+            if (!Schema::hasColumn('users', 'country_id')) {
                 $table->foreignUuid('country_id')->nullable()->after('city')->constrained('countries');
             }
         });
+
+        // Now migrate the data if country column exists
+        if (Schema::hasColumn('users', 'country')) {
+            DB::statement('UPDATE users SET country_id = (SELECT id FROM countries WHERE name = users.country LIMIT 1)');
+
+            // Drop the old column after data migration
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('country');
+            });
+        }
     }
 
     /**
@@ -44,8 +47,13 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Drop new columns
-            $table->dropForeign(['country_id']);
-            $table->dropColumn(['city', 'country_id']);
+            if (Schema::hasColumn('users', 'country_id')) {
+                $table->dropForeign(['country_id']);
+                $table->dropColumn('country_id');
+            }
+            if (Schema::hasColumn('users', 'city')) {
+                $table->dropColumn('city');
+            }
 
             // Add back old columns
             $table->string('longitude')->nullable();
