@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -12,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('checkins', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('concert_id')->constrained('concerts');
-            $table->foreignUuid('user_id')->constrained('users');
-            $table->timestamps();
+        Schema::table('checkin_photos', function (Blueprint $table) {
+            $table->string('url')->nullable()->change();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('checkins');
+        Schema::table('checkin_photos', function (Blueprint $table) {
+            $table->string('url')->nullable(false)->change();
+        });
     }
 };

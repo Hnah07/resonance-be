@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Country;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -40,8 +41,8 @@ class UserFactory extends Factory
             'role' => 'user',
             'is_active' => true,
             'bio' => fake()->optional()->paragraph(),
-            'longitude' => fake()->optional()->longitude(),
-            'latitude' => fake()->optional()->latitude(),
+            'city' => fake()->optional()->city(),
+            'country_id' => Country::where('name', 'Belgium')->first()?->id,
         ];
     }
 

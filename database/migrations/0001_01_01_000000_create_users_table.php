@@ -19,8 +19,8 @@ return new class extends Migration
             $table->enum('role', ['admin', 'super user', 'user'])->default('user');
             $table->boolean('is_active')->default(true);
             $table->string('bio')->nullable();
-            $table->string('longitude')->nullable();
-            $table->string('latitude')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

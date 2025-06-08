@@ -20,6 +20,9 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Users';
+    protected static ?string $navigationGroup = 'User Management';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -73,12 +76,12 @@ class UserResource extends Resource
                         Forms\Components\Textarea::make('bio')
                             ->maxLength(65535)
                             ->columnSpanFull(),
-                        Forms\Components\TextInput::make('longitude')
-                            ->numeric()
+                        Forms\Components\TextInput::make('city')
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('latitude')
-                            ->numeric()
-                            ->maxLength(255),
+                        Forms\Components\Select::make('country_id')
+                            ->relationship('country', 'name')
+                            ->searchable()
+                            ->preload(),
                     ])->columns(2),
             ]);
     }
