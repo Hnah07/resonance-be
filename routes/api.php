@@ -19,11 +19,13 @@ use App\Http\Controllers\CheckinController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Protected routes
+// Protected routes with auth:sanctum
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+});
 
+Route::middleware('api')->group(function () {
     // Existing protected routes
     Route::apiResource('events', EventController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::apiResource('locations', LocationController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
