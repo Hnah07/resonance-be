@@ -42,7 +42,7 @@ class UserFactory extends Factory
             'is_active' => true,
             'bio' => fake()->optional()->paragraph(),
             'city' => fake()->optional()->city(),
-            'country' => Country::where('name', 'Belgium')->first()->id,
+            'country_id' => Country::where('name', 'Belgium')->first()?->id,
         ];
     }
 

@@ -76,12 +76,12 @@ class UserResource extends Resource
                         Forms\Components\Textarea::make('bio')
                             ->maxLength(65535)
                             ->columnSpanFull(),
-                        Forms\Components\TextInput::make('longitude')
-                            ->numeric()
+                        Forms\Components\TextInput::make('city')
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('latitude')
-                            ->numeric()
-                            ->maxLength(255),
+                        Forms\Components\Select::make('country_id')
+                            ->relationship('country', 'name')
+                            ->searchable()
+                            ->preload(),
                     ])->columns(2),
             ]);
     }

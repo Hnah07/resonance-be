@@ -39,7 +39,7 @@ class User extends Authenticatable implements FilamentUser
         'is_active',
         'bio',
         'city',
-        'country',
+        'country_id',
     ];
 
     /**
@@ -101,5 +101,13 @@ class User extends Authenticatable implements FilamentUser
     public function checkins()
     {
         return $this->hasMany(Checkin::class);
+    }
+
+    /**
+     * Get the country that the user is from.
+     */
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
     }
 }
