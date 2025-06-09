@@ -91,9 +91,16 @@ class ConcertController extends Controller
      *         )
      *     ),
      *     @OA\Parameter(
-     *         name="location",
+     *         name="location_name",
      *         in="query",
      *         description="Filter by location name",
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="location_city",
+     *         in="query",
+     *         description="Filter by location city",
      *         required=false,
      *         @OA\Schema(type="string")
      *     ),
@@ -197,9 +204,15 @@ class ConcertController extends Controller
             $query->where('date', '<=', $request->date_to);
         }
 
-        if ($request->has('location')) {
+        if ($request->has('location_name')) {
             $query->whereHas('location', function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->location}%");
+                $q->where('name', 'like', "%{$request->location_name}%");
+            });
+        }
+
+        if ($request->has('location_city')) {
+            $query->whereHas('location', function ($q) use ($request) {
+                $q->where('city', 'like', "%{$request->location_city}%");
             });
         }
 
