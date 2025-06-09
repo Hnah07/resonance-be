@@ -170,7 +170,7 @@ class LocationController extends Controller
         }
 
         if ($request->has('city')) {
-            $query->where('city', $request->city);
+            $query->where('city', 'like', "%{$request->city}%");
         }
 
         if ($request->has('status')) {
