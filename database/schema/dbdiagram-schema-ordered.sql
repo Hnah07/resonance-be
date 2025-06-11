@@ -209,6 +209,18 @@ CREATE TABLE `checkin_comments` (
   CONSTRAINT `checkin_comments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 );
 
+CREATE TABLE `checkin_ratings` (
+  `id` CHAR(36) NOT NULL,
+  `checkin_id` CHAR(36) NOT NULL,
+  `rating` decimal(2,1) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `checkin_ratings_checkin_id_foreign` (`checkin_id`),
+  CONSTRAINT `checkin_ratings_checkin_id_foreign` FOREIGN KEY (`checkin_id`) REFERENCES `checkins` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `checkin_ratings_rating_check` CHECK (`rating` IS NULL OR (`rating` >= 0.5 AND `rating` <= 5.0 AND `rating` * 10 MOD 5 = 0))
+);
+
 CREATE TABLE `checkin_likes` (
   `id` CHAR(36) NOT NULL,
   `checkin_id` CHAR(36) NOT NULL,
