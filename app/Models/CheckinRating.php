@@ -19,4 +19,9 @@ class CheckinRating extends Model
     {
         return $this->belongsTo(Checkin::class);
     }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

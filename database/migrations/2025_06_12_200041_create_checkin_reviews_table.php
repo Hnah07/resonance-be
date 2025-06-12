@@ -15,8 +15,6 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->text('review');
             $table->foreignUuid('checkin_id')->constrained('checkins')->onDelete('cascade');
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
-            $table->unique(['checkin_id', 'user_id']);
             $table->timestamps();
         });
     }
