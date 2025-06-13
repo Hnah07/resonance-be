@@ -20,7 +20,7 @@ class ConcertSeeder extends Seeder
         Concert::create([
             'event_id' => Event::where('name', 'Tomorrowland')->first()->id,
             'location_id' => Location::where('name', 'Provinciaal Recreatiedomein De Schorre')->first()->id,
-            'date' => '2024-07-19',
+            'date' => '2025-07-20',
             'source_id' => Source::where('source', 'manual')->first()->id,
             'status_id' => Status::where('status', 'verified')->first()->id,
         ]);

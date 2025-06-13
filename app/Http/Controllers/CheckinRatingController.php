@@ -58,7 +58,7 @@ class CheckinRatingController extends Controller
     /**
      * @OA\Post(
      *     path="/api/checkin-ratings",
-     *     summary="Create or update a rating for a checkin",
+     *     summary="Create a rating for a checkin",
      *     tags={"Checkin Ratings"},
      *     security={{"sanctum":{}}},
      *     @OA\RequestBody(
@@ -80,13 +80,15 @@ class CheckinRatingController extends Controller
      *                 type="object",
      *                 @OA\Property(property="id", type="string", format="uuid"),
      *                 @OA\Property(property="checkin_id", type="string", format="uuid"),
-     *                 @OA\Property(property="rating", type="number", format="float")
+     *                 @OA\Property(property="rating", type="number", format="float"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time")
      *             )
      *         )
      *     ),
      *     @OA\Response(response=401, description="Unauthenticated"),
      *     @OA\Response(response=403, description="Unauthorized - User can only rate their own checkins"),
-     *     @OA\Response(response=422, description="Validation error")
+     *     @OA\Response(response=422, description="Validation error or rating already exists")
      * )
      */
     public function store(Request $request): JsonResponse
@@ -102,14 +104,20 @@ class CheckinRatingController extends Controller
             return response()->json(['message' => 'Unauthorized - You can only rate your own checkins'], 403);
         }
 
-        // Create or update the rating
-        $rating = CheckinRating::updateOrCreate(
-            ['checkin_id' => $validated['checkin_id']],
-            ['rating' => $validated['rating']]
-        );
+        // Check if rating already exists
+        $existing = CheckinRating::where('checkin_id', $validated['checkin_id'])->first();
+        if ($existing) {
+            return response()->json(['message' => 'Rating already exists for this checkin'], 422);
+        }
+
+        // Create the rating
+        $rating = CheckinRating::create([
+            'checkin_id' => $validated['checkin_id'],
+            'rating' => $validated['rating']
+        ]);
 
         return response()->json([
-            'message' => 'Rating saved successfully',
+            'message' => 'Rating created successfully',
             'rating' => $rating
         ], 201);
     }
@@ -164,10 +172,63 @@ class CheckinRatingController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/checkin-ratings/{checkinRating}",
+     *     summary="Update a rating",
+     *     tags={"Checkin Ratings"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="checkinRating",
+     *         in="path",
+     *         required=true,
+     *         description="UUID of the rating to update",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"rating"},
+     *             @OA\Property(property="rating", type="number", format="float", minimum=0.5, maximum=5.0)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Rating updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(
+     *                 property="rating",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="string", format="uuid"),
+     *                 @OA\Property(property="checkin_id", type="string", format="uuid"),
+     *                 @OA\Property(property="rating", type="number", format="float"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=403, description="Unauthorized - User can only update their own ratings"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
-    public function update(Request $request, CheckinRating $checkinRating)
+    public function update(Request $request, CheckinRating $checkinRating): JsonResponse
     {
-        //
+        // Verify the check-in belongs to the authenticated user
+        if ($checkinRating->checkin->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized - You can only update your own ratings'], 403);
+        }
+
+        $validated = $request->validate([
+            'rating' => 'required|numeric|min:0.5|max:5.0'
+        ]);
+
+        $checkinRating->update($validated);
+
+        return response()->json([
+            'message' => 'Rating updated successfully',
+            'rating' => $checkinRating
+        ]);
     }
 }

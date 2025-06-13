@@ -45,6 +45,7 @@ class DatabaseSeeder extends Seeder
             CheckinLikeSeeder::class, // Depends on Checkin
             CheckinCommentSeeder::class, // Depends on Checkin
             CheckinRatingSeeder::class, // Depends on Checkin
+            CheckinReviewSeeder::class, // Depends on Checkin
         ]);
     }
 }

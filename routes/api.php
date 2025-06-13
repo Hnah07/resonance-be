@@ -10,6 +10,13 @@ use App\Http\Controllers\GenreController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FollowerController;
 use App\Http\Controllers\CheckinController;
+use App\Http\Controllers\FileUploadController;
+use App\Http\Controllers\CheckinPhotoController;
+use App\Http\Controllers\CheckinCommentController;
+use App\Http\Controllers\CheckinLikeController;
+use App\Http\Controllers\CheckinRatingController;
+use App\Http\Controllers\CheckinReviewController;
+use App\Http\Controllers\ArtistCheckinController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -23,6 +30,16 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/upload', [FileUploadController::class, 'store']);
+
+    // Move check-in routes here
+    Route::apiResource('checkins', CheckinController::class)->only(['index', 'store', 'show', 'destroy']);
+    Route::apiResource('checkin-photos', CheckinPhotoController::class);
+    Route::apiResource('checkin-comments', CheckinCommentController::class);
+    Route::apiResource('checkin-likes', CheckinLikeController::class);
+    Route::apiResource('checkin-ratings', CheckinRatingController::class);
+    Route::apiResource('checkin-reviews', CheckinReviewController::class);
+    Route::apiResource('artist-checkins', ArtistCheckinController::class);
 });
 
 Route::middleware('api')->group(function () {
@@ -32,21 +49,24 @@ Route::middleware('api')->group(function () {
     Route::apiResource('artists', ArtistController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::apiResource('concerts', ConcertController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::apiResource('genres', GenreController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
-    Route::apiResource('checkins', CheckinController::class)->only(['index', 'store', 'show', 'destroy']);
     Route::apiResource('followers', FollowerController::class)->only(['index', 'store', 'destroy']);
 
-    // Concert artist management routes
-    Route::get('/concerts/{concert}/artists', [ConcertController::class, 'getArtists']);
-    Route::post('/concerts/{concert}/artists', [ConcertController::class, 'attachArtist']);
-    Route::delete('/concerts/{concert}/artists/{artistId}', [ConcertController::class, 'detachArtist']);
+    // // Concert artist management routes
+    // Route::get('/concerts/{concert}/artists', [ConcertController::class, 'getArtists']);
+    // Route::post('/concerts/{concert}/artists', [ConcertController::class, 'attachArtist']);
+    // Route::delete('/concerts/{concert}/artists/{artistId}', [ConcertController::class, 'detachArtist']);
 
-    // Artist concert management routes
-    Route::get('/artists/{artist}/concerts', [ArtistController::class, 'getConcerts']);
-    Route::post('/artists/{artist}/concerts', [ArtistController::class, 'attachConcert']);
-    Route::delete('/artists/{artist}/concerts/{concertId}', [ArtistController::class, 'detachConcert']);
+    // // Artist concert management routes
+    // Route::get('/artists/{artist}/concerts', [ArtistController::class, 'getConcerts']);
+    // Route::post('/artists/{artist}/concerts', [ArtistController::class, 'attachConcert']);
+    // Route::delete('/artists/{artist}/concerts/{concertId}', [ArtistController::class, 'detachConcert']);
 
-    // Artist genre management routes
-    Route::get('/artists/{artist}/genres', [ArtistController::class, 'getGenres']);
-    Route::post('/artists/{artist}/genres', [ArtistController::class, 'attachGenres']);
-    Route::delete('/artists/{artist}/genres/{genreId}', [ArtistController::class, 'detachGenre']);
+    // // Artist genre management routes
+    // Route::get('/artists/{artist}/genres', [ArtistController::class, 'getGenres']);
+    // Route::post('/artists/{artist}/genres', [ArtistController::class, 'attachGenres']);
+    // Route::delete('/artists/{artist}/genres/{genreId}', [ArtistController::class, 'detachGenre']);
+
+    Route::apiResource('concerts.artists', ConcertController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::apiResource('artists.concerts', ArtistController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::apiResource('artists.genres', ArtistController::class)->only(['index', 'store', 'update', 'destroy']);
 });

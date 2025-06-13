@@ -301,11 +301,17 @@ class ConcertController extends Controller
         if (isset($validated['source'])) {
             $validated['source_id'] = Source::where('source', $validated['source'])->first()->id;
             unset($validated['source']);
+        } else {
+            // Set default source to 'manual' if not provided
+            $validated['source_id'] = Source::where('source', 'manual')->first()->id;
         }
 
         if (isset($validated['status'])) {
             $validated['status_id'] = Status::where('status', $validated['status'])->first()->id;
             unset($validated['status']);
+        } else {
+            // Set default status to 'pending_approval' if not provided
+            $validated['status_id'] = Status::where('status', 'pending_approval')->first()->id;
         }
 
         $concert = Concert::create($validated);

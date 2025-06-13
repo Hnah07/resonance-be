@@ -22,7 +22,24 @@ class ArtistConcertSeeder extends Seeder
                 $query->where('name', 'Tomorrowland');
             })->first()->id,
         ]);
-
+        ArtistConcert::create([
+            'artist_id' => Artist::where('name', 'The Who')->first()->id,
+            'concert_id' => Concert::whereHas('event', function ($query) {
+                $query->where('name', 'Tomorrowland');
+            })->first()->id,
+        ]);
+        ArtistConcert::create([
+            'artist_id' => Artist::where('name', 'The Rolling Stones')->first()->id,
+            'concert_id' => Concert::whereHas('event', function ($query) {
+                $query->where('name', 'Graspop Metal Meeting');
+            })->first()->id,
+        ]);
+        ArtistConcert::create([
+            'artist_id' => Artist::where('name', 'The Doors')->first()->id,
+            'concert_id' => Concert::whereHas('event', function ($query) {
+                $query->where('name', 'Graspop Metal Meeting');
+            })->first()->id,
+        ]);
         // Link The Rolling Stones to Graspop concert
         ArtistConcert::create([
             'artist_id' => Artist::where('name', 'Paleface Swiss')->first()->id,

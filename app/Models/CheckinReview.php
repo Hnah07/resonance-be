@@ -6,22 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CheckinRating extends Model
+class CheckinReview extends Model
 {
     use HasUuids;
 
-    protected $fillable = [
-        'checkin_id',
-        'rating',
-    ];
+    protected $fillable = ['review', 'checkin_id'];
 
-    public function checkin(): BelongsTo
+    public function checkin()
     {
         return $this->belongsTo(Checkin::class);
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
     }
 }
