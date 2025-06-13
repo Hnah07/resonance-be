@@ -11,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 /**
  * @OA\Tag(
  *     name="Checkin Comments",
- *     description="API Endpoints for managing checkin comments"
+ *     description="API Endpoints for managing check-in comments. Comments allow any authenticated user to interact with and discuss check-ins. Multiple comments can exist for each check-in."
  * )
  */
 class CheckinCommentController extends Controller

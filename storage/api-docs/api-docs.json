@@ -2281,6 +2281,509 @@
                 }
             }
         },
+        "/api/checkin-ratings": {
+            "get": {
+                "tags": [
+                    "Checkin Ratings"
+                ],
+                "summary": "Get all ratings for a checkin",
+                "operationId": "4c90863a2cf7cff66d4da98349c3bb2e",
+                "parameters": [
+                    {
+                        "name": "checkin_id",
+                        "in": "query",
+                        "description": "ID of the checkin to get ratings for",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of ratings for the checkin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "rating": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 4.5
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Rating not found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Checkin Ratings"
+                ],
+                "summary": "Create or update a rating for a checkin",
+                "operationId": "b47fd755e0b7ed03ca61a6b3bab223d3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "checkin_id",
+                                    "rating"
+                                ],
+                                "properties": {
+                                    "checkin_id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "rating": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "maximum": 5,
+                                        "minimum": 0.5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Rating created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "rating": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "checkin_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "rating": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized - User can only rate their own checkins"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/checkin-ratings/{checkinRating}": {
+            "delete": {
+                "tags": [
+                    "Checkin Ratings"
+                ],
+                "summary": "Delete a rating",
+                "operationId": "2e333a3923886cffbb3a6c4a637d7562",
+                "parameters": [
+                    {
+                        "name": "checkinRating",
+                        "in": "path",
+                        "description": "UUID of the rating to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Rating deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized - User can only delete their own ratings"
+                    },
+                    "404": {
+                        "description": "Rating not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/checkin-reviews": {
+            "get": {
+                "tags": [
+                    "Checkin Reviews"
+                ],
+                "summary": "Get the review for a checkin",
+                "operationId": "e1f1d316d87509637a49146dd2ecf154",
+                "parameters": [
+                    {
+                        "name": "checkin_id",
+                        "in": "query",
+                        "description": "ID of the checkin to get the review for",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review for the checkin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "review": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "checkin_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "review": {
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Checkin Reviews"
+                ],
+                "summary": "Create a review for a checkin",
+                "operationId": "e74bb5da7a0a88ebbd58a48a00943fc8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "checkin_id",
+                                    "review"
+                                ],
+                                "properties": {
+                                    "checkin_id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "review": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Review created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "review": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "checkin_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "review": {
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized - User can only review their own checkins"
+                    },
+                    "422": {
+                        "description": "Validation error or review already exists"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/checkin-reviews/{checkinReview}": {
+            "get": {
+                "tags": [
+                    "Checkin Reviews"
+                ],
+                "summary": "Get a specific checkin review",
+                "operationId": "cb54678ca6145d816d8a90fdeae1527e",
+                "parameters": [
+                    {
+                        "name": "checkinReview",
+                        "in": "path",
+                        "description": "UUID of the review to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "review": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "checkin_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "review": {
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Review not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Checkin Reviews"
+                ],
+                "summary": "Update a checkin review",
+                "operationId": "df24ed08b51306461696cae0b3fefae3",
+                "parameters": [
+                    {
+                        "name": "checkinReview",
+                        "in": "path",
+                        "description": "UUID of the review to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "review"
+                                ],
+                                "properties": {
+                                    "review": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Review updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "review": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "checkin_id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "review": {
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized - User can only update their own reviews"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Checkin Reviews"
+                ],
+                "summary": "Delete a checkin review",
+                "operationId": "969e15c59f12680427aacd66a1229445",
+                "parameters": [
+                    {
+                        "name": "checkinReview",
+                        "in": "path",
+                        "description": "UUID of the review to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Review deleted successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Unauthorized - User can only delete their own reviews"
+                    },
+                    "404": {
+                        "description": "Review not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/concerts": {
             "get": {
                 "tags": [
@@ -2340,9 +2843,18 @@
                         }
                     },
                     {
-                        "name": "location",
+                        "name": "location_name",
                         "in": "query",
                         "description": "Filter by location name",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "location_city",
+                        "in": "query",
+                        "description": "Filter by location city",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -3416,6 +3928,63 @@
                     },
                     "404": {
                         "description": "Event not found"
+                    }
+                }
+            }
+        },
+        "/api/upload": {
+            "post": {
+                "tags": [
+                    "File Upload"
+                ],
+                "summary": "Upload a file",
+                "operationId": "7142eb53d1955094bfd517b27314d350",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "The file to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "type": {
+                                        "description": "The type of file being uploaded",
+                                        "type": "string",
+                                        "enum": [
+                                            "profile-photos",
+                                            "artists",
+                                            "events",
+                                            "checkin-photos"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "File uploaded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "url": {
+                                            "description": "The URL of the uploaded file",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 }
             }
@@ -4843,7 +5412,7 @@
         },
         {
             "name": "Checkin Comments",
-            "description": "API Endpoints for managing checkin comments"
+            "description": "API Endpoints for managing check-in comments. Comments allow any authenticated user to interact with and discuss check-ins. Multiple comments can exist for each check-in."
         },
         {
             "name": "Checkins",
@@ -4856,6 +5425,14 @@
         {
             "name": "Checkin Photos",
             "description": "API Endpoints for managing checkin photos"
+        },
+        {
+            "name": "Checkin Ratings",
+            "description": "API Endpoints for managing checkin ratings"
+        },
+        {
+            "name": "Checkin Reviews",
+            "description": "API Endpoints for managing check-in reviews. Reviews are written by the check-in owner to reflect on their experience. Each check-in can have only one review."
         },
         {
             "name": "Concerts",
@@ -4876,6 +5453,10 @@
         {
             "name": "Locations",
             "description": "API Endpoints for managing locations"
+        },
+        {
+            "name": "File Upload",
+            "description": "File Upload"
         }
     ]
 }

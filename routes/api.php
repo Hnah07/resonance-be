@@ -15,6 +15,7 @@ use App\Http\Controllers\CheckinPhotoController;
 use App\Http\Controllers\CheckinCommentController;
 use App\Http\Controllers\CheckinLikeController;
 use App\Http\Controllers\CheckinRatingController;
+use App\Http\Controllers\CheckinReviewController;
 use App\Http\Controllers\ArtistCheckinController;
 
 
@@ -37,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('checkin-comments', CheckinCommentController::class);
     Route::apiResource('checkin-likes', CheckinLikeController::class);
     Route::apiResource('checkin-ratings', CheckinRatingController::class);
+    Route::apiResource('checkin-reviews', CheckinReviewController::class);
     Route::apiResource('artist-checkins', ArtistCheckinController::class);
 });
 

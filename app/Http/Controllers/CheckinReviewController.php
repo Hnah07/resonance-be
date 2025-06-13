@@ -12,7 +12,7 @@ use OpenApi\Annotations as OA;
 /**
  * @OA\Tag(
  *     name="Checkin Reviews",
- *     description="API Endpoints for managing checkin reviews"
+ *     description="API Endpoints for managing check-in reviews. Reviews are written by the check-in owner to reflect on their experience. Each check-in can have only one review."
  * )
  */
 class CheckinReviewController extends Controller
