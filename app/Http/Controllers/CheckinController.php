@@ -100,10 +100,16 @@ class CheckinController extends Controller
             'concert_id' => 'required|uuid|exists:concerts,id'
         ]);
 
+        $alreadyCheckedIn = Checkin::where('user_id', Auth::id())->where('concert_id', $validated['concert_id'])->first();
+        if ($alreadyCheckedIn) {
+            return response()->json(['message' => 'You have already checked in to this concert'], 422);
+        }
+
         $checkin = Checkin::create([
             'concert_id' => $validated['concert_id'],
             'user_id' => Auth::id()
         ]);
+
 
         // Only load the concert relationship for the response
         $checkin->load('concert:id,date,event_id', 'concert.event:id,name');
