@@ -82,7 +82,7 @@ class CheckinPhotoController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'checkin_id' => 'required|uuid|exists:checkins,id',
-            'url' => 'required|url',
+            'url' => 'required|string',
             'caption' => 'nullable|string|max:255'
         ]);
 
