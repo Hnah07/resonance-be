@@ -17,6 +17,7 @@ use App\Http\Controllers\CheckinLikeController;
 use App\Http\Controllers\CheckinRatingController;
 use App\Http\Controllers\CheckinReviewController;
 use App\Http\Controllers\ArtistCheckinController;
+use App\Http\Controllers\TimelineController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -31,6 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/upload', [FileUploadController::class, 'store']);
+    Route::get('/timeline', [TimelineController::class, 'index']);
 
     // Move check-in routes here
     Route::apiResource('checkins', CheckinController::class)->only(['index', 'store', 'show', 'destroy']);
