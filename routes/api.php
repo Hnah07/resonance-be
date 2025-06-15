@@ -18,6 +18,7 @@ use App\Http\Controllers\CheckinRatingController;
 use App\Http\Controllers\CheckinReviewController;
 use App\Http\Controllers\ArtistCheckinController;
 use App\Http\Controllers\TimelineController;
+use App\Http\Controllers\CountryController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -42,6 +43,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('checkin-ratings', CheckinRatingController::class);
     Route::apiResource('checkin-reviews', CheckinReviewController::class);
     Route::apiResource('artist-checkins', ArtistCheckinController::class);
+
+    // Countries
+    Route::get('/countries', [CountryController::class, 'index']);
+    Route::get('/countries/{country}', [CountryController::class, 'show']);
 });
 
 Route::middleware('api')->group(function () {
