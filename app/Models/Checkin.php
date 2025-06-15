@@ -67,6 +67,11 @@ class Checkin extends Model
         return $this->hasOne(CheckinRating::class);
     }
 
+    public function review()
+    {
+        return $this->hasOne(CheckinReview::class);
+    }
+
     protected static function boot()
     {
         parent::boot();
