@@ -19,6 +19,7 @@ use App\Http\Controllers\CheckinReviewController;
 use App\Http\Controllers\ArtistCheckinController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\SummaryStatsController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -34,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/upload', [FileUploadController::class, 'store']);
     Route::get('/timeline', [TimelineController::class, 'index']);
+    Route::get('/summary-stats', [SummaryStatsController::class, 'index']);
 
     Route::apiResource('checkins', CheckinController::class)->only(['index', 'store', 'show', 'destroy']);
     Route::apiResource('checkin-photos', CheckinPhotoController::class);
