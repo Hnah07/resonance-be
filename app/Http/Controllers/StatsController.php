@@ -88,9 +88,8 @@ class StatsController extends Controller
 
         // Genre distribution
         $genreDistribution = Checkin::where('user_id', $user->id)
-            ->join('concerts', 'checkins.concert_id', '=', 'concerts.id')
-            ->join('artist_concerts', 'concerts.id', '=', 'artist_concerts.concert_id')
-            ->join('artists', 'artist_concerts.artist_id', '=', 'artists.id')
+            ->join('artist_checkins', 'checkins.id', '=', 'artist_checkins.checkin_id')
+            ->join('artists', 'artist_checkins.artist_id', '=', 'artists.id')
             ->join('artist_genres', 'artists.id', '=', 'artist_genres.artist_id')
             ->join('genres', 'artist_genres.genre_id', '=', 'genres.id')
             ->select('genres.genre as genre', DB::raw('COUNT(DISTINCT checkins.id) as count'))
@@ -110,9 +109,8 @@ class StatsController extends Controller
 
         // Top artists
         $topArtists = Checkin::where('user_id', $user->id)
-            ->join('concerts', 'checkins.concert_id', '=', 'concerts.id')
-            ->join('artist_concerts', 'concerts.id', '=', 'artist_concerts.concert_id')
-            ->join('artists', 'artist_concerts.artist_id', '=', 'artists.id')
+            ->join('artist_checkins', 'checkins.id', '=', 'artist_checkins.checkin_id')
+            ->join('artists', 'artist_checkins.artist_id', '=', 'artists.id')
             ->select(
                 'artists.name as artist',
                 'artists.image_url as image',
