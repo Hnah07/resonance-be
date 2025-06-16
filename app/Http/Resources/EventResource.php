@@ -21,7 +21,7 @@ class EventResource extends JsonResource
             'end_date' => $this->end_date,
             'description' => $this->description,
             'type' => $this->type,
-            'image_url' => $this->image_url,
+            'image_url' => $this->image_url ? asset('storage/' . $this->image_url) : null,
             'source' => $this->source?->source ?? 'manual',
             'status' => $this->status?->status ?? 'pending_approval',
         ];
