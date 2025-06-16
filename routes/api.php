@@ -35,7 +35,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/upload', [FileUploadController::class, 'store']);
     Route::get('/timeline', [TimelineController::class, 'index']);
 
-    // Move check-in routes here
     Route::apiResource('checkins', CheckinController::class)->only(['index', 'store', 'show', 'destroy']);
     Route::apiResource('checkin-photos', CheckinPhotoController::class);
     Route::apiResource('checkin-comments', CheckinCommentController::class);
@@ -44,13 +43,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('checkin-reviews', CheckinReviewController::class);
     Route::apiResource('artist-checkins', ArtistCheckinController::class);
 
-    // Countries
     Route::get('/countries', [CountryController::class, 'index']);
     Route::get('/countries/{country}', [CountryController::class, 'show']);
 });
 
 Route::middleware('api')->group(function () {
-    // Existing protected routes
     Route::apiResource('events', EventController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::apiResource('locations', LocationController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
     Route::apiResource('artists', ArtistController::class)->only(['index', 'store', 'show', 'update', 'destroy']);
