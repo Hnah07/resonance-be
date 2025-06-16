@@ -20,6 +20,7 @@ use App\Http\Controllers\ArtistCheckinController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\SummaryStatsController;
+use App\Http\Controllers\StatsController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -33,6 +34,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/profile/stats', [StatsController::class, 'profileStats']);
     Route::post('/upload', [FileUploadController::class, 'store']);
     Route::get('/timeline', [TimelineController::class, 'index']);
     Route::get('/summary-stats', [SummaryStatsController::class, 'index']);
