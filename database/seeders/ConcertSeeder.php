@@ -27,7 +27,31 @@ class ConcertSeeder extends Seeder
         Concert::create([
             'event_id' => Event::where('name', 'Graspop Metal Meeting')->first()->id,
             'location_id' => Location::where('name', 'Festivalpark Stenehei')->first()->id,
-            'date' => '2024-07-19',
+            'date' => '2024-06-19',
+            'source_id' => Source::where('source', 'manual')->first()->id,
+            'status_id' => Status::where('status', 'verified')->first()->id,
+        ]);
+
+        Concert::create([
+            'event_id' => Event::where('name', 'Graspop Metal Meeting')->first()->id,
+            'location_id' => Location::where('name', 'Festivalpark Stenehei')->first()->id,
+            'date' => '2024-06-20',
+            'source_id' => Source::where('source', 'manual')->first()->id,
+            'status_id' => Status::where('status', 'verified')->first()->id,
+        ]);
+
+        Concert::create([
+            'event_id' => Event::where('name', 'Graspop Metal Meeting')->first()->id,
+            'location_id' => Location::where('name', 'Festivalpark Stenehei')->first()->id,
+            'date' => '2024-06-21',
+            'source_id' => Source::where('source', 'manual')->first()->id,
+            'status_id' => Status::where('status', 'verified')->first()->id,
+        ]);
+
+        Concert::create([
+            'event_id' => Event::where('name', 'Graspop Metal Meeting')->first()->id,
+            'location_id' => Location::where('name', 'Festivalpark Stenehei')->first()->id,
+            'date' => '2024-06-22',
             'source_id' => Source::where('source', 'manual')->first()->id,
             'status_id' => Status::where('status', 'verified')->first()->id,
         ]);

@@ -15,9 +15,9 @@ class CheckinRatingSeeder extends Seeder
      */
     public function run(): void
     {
-        CheckinRating::create([
-            'checkin_id' => Checkin::where('user_id', User::where('email', 'admin@r.be')->first()->id)->first()->id,
-            'rating' => 3.5,
-        ]);
+        // CheckinRating::create([
+        //     'checkin_id' => Checkin::where('user_id', User::where('email', 'admin@r.be')->first()->id)->first()->id,
+        //     'rating' => 3.5,
+        // ]);
     }
 }

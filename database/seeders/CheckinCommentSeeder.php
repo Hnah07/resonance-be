@@ -15,10 +15,10 @@ class CheckinCommentSeeder extends Seeder
      */
     public function run(): void
     {
-        CheckinComment::create([
-            'checkin_id' => Checkin::where('user_id', User::where('email', 'admin@r.be')->first()->id)->first()->id,
-            'user_id' => User::where('email', 'test@example.com')->first()->id,
-            'comment' => 'This is a test comment'
-        ]);
+        // CheckinComment::create([
+        //     'checkin_id' => Checkin::where('user_id', User::where('email', 'admin@r.be')->first()->id)->first()->id,
+        //     'user_id' => User::where('email', 'test@example.com')->first()->id,
+        //     'comment' => 'This is a test comment'
+        // ]);
     }
 }

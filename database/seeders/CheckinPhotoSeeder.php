@@ -15,10 +15,10 @@ class CheckinPhotoSeeder extends Seeder
      */
     public function run(): void
     {
-        CheckinPhoto::create([
-            'checkin_id' => Checkin::where('user_id', User::where('email', 'admin@r.be')->first()->id)->first()->id,
-            'url' => 'https://placehold.co/600x400',
-            'caption' => 'This is a test caption'
-        ]);
+        // CheckinPhoto::create([
+        //     'checkin_id' => Checkin::where('user_id', User::where('email', 'admin@r.be')->first()->id)->first()->id,
+        //     'url' => 'https://placehold.co/600x400',
+        //     'caption' => 'This is a test caption'
+        // ]);
     }
 }

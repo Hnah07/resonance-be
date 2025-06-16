@@ -14,9 +14,9 @@ class FollowerSeeder extends Seeder
      */
     public function run(): void
     {
-        Follower::create([
-            'follower_id' => User::where('email', 'admin@r.be')->first()->id,
-            'followed_id' => User::where('email', 'test@example.com')->first()->id,
-        ]);
+        // Follower::create([
+        //     'follower_id' => User::where('email', 'admin@r.be')->first()->id,
+        //     'followed_id' => User::where('email', 'test@example.com')->first()->id,
+        // ]);
     }
 }

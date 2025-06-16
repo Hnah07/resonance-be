@@ -15,9 +15,9 @@ class CheckinLikeSeeder extends Seeder
      */
     public function run(): void
     {
-        CheckinLike::create([
-            'checkin_id' => Checkin::where('user_id', User::where('email', 'admin@r.be')->first()->id)->first()->id,
-            'user_id' => User::where('email', 'test@example.com')->first()->id,
-        ]);
+        // CheckinLike::create([
+        //     'checkin_id' => Checkin::where('user_id', User::where('email', 'admin@r.be')->first()->id)->first()->id,
+        //     'user_id' => User::where('email', 'test@example.com')->first()->id,
+        // ]);
     }
 }

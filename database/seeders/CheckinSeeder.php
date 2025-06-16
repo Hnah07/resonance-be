@@ -15,13 +15,13 @@ class CheckinSeeder extends Seeder
      */
     public function run(): void
     {
-        Checkin::create([
-            'concert_id' => Concert::where('date', '2024-07-19')
-                ->whereHas('location', function ($query) {
-                    $query->where('name', 'Festivalpark Stenehei');
-                })
-                ->first()->id,
-            'user_id' => User::where('email', 'admin@r.be')->first()->id,
-        ]);
+        // Checkin::create([
+        //     'concert_id' => Concert::where('date', '2024-07-19')
+        //         ->whereHas('location', function ($query) {
+        //             $query->where('name', 'Festivalpark Stenehei');
+        //         })
+        //         ->first()->id,
+        //     'user_id' => User::where('email', 'admin@r.be')->first()->id,
+        // ]);
     }
 }

@@ -15,7 +15,13 @@ class GenreSeeder extends Seeder
     {
         $genres = [
             'Rock',
+            'Alternative Rock',
             'Pop',
+            'Post-Metal',
+            'Nu Metal',
+            'Blackened Death Metal',
+            'Pirate Metal',
+            'Heavy Metal',
             'Hip Hop',
             'Electronic',
             'Jazz',
