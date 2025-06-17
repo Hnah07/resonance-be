@@ -32,12 +32,12 @@ class CheckinResource extends JsonResource
                     'type' => $this->concert->event->type,
                     'image_url' => $this->concert->event->image_url,
                 ],
-                'location' => [
+                'location' => $this->concert->location ? [
                     'id' => $this->concert->location->id,
                     'name' => $this->concert->location->name,
                     'city' => $this->concert->location->city,
-                    'country' => $this->concert->location->country->name,
-                ],
+                    'country' => $this->concert->location->country ? $this->concert->location->country->name : null,
+                ] : null,
                 'artists' => $this->artists->map(fn($artist) => [
                     'id' => $artist->id,
                     'name' => $artist->name,

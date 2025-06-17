@@ -6191,6 +6191,356 @@
                     }
                 }
             }
+        },
+        "/api/users/{id}/check-ins": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get check-ins for a specific user",
+                "description": "Retrieve a paginated list of check-ins for a specific user, ordered by creation date (newest first)",
+                "operationId": "855b8b2da6f76d295485d1d90ad1011e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of check-ins per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of user check-ins",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid",
+                                                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                                                    },
+                                                    "user": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "456e7890-e89b-12d3-a456-426614174000"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "username": {
+                                                                "type": "string",
+                                                                "example": "johndoe"
+                                                            },
+                                                            "profile_photo_url": {
+                                                                "type": "string",
+                                                                "example": "https://example.com/photos/profile.jpg",
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "concert": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "789e0123-e89b-12d3-a456-426614174000"
+                                                            },
+                                                            "date": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "example": "2024-07-19"
+                                                            },
+                                                            "event": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "format": "uuid",
+                                                                        "example": "012e3456-e89b-12d3-a456-426614174000"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Tomorrowland 2024"
+                                                                    },
+                                                                    "type": {
+                                                                        "type": "string",
+                                                                        "example": "festival"
+                                                                    },
+                                                                    "image_url": {
+                                                                        "type": "string",
+                                                                        "example": "https://example.com/events/tomorrowland.jpg",
+                                                                        "nullable": true
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "location": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "format": "uuid",
+                                                                        "example": "345e6789-e89b-12d3-a456-426614174000"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Boom"
+                                                                    },
+                                                                    "city": {
+                                                                        "type": "string",
+                                                                        "example": "Boom"
+                                                                    },
+                                                                    "country": {
+                                                                        "type": "string",
+                                                                        "example": "Belgium"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "artists": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "string",
+                                                                            "format": "uuid",
+                                                                            "example": "678e9012-e89b-12d3-a456-426614174000"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Martin Garrix"
+                                                                        },
+                                                                        "image_url": {
+                                                                            "type": "string",
+                                                                            "example": "https://example.com/artists/martin-garrix.jpg",
+                                                                            "nullable": true
+                                                                        },
+                                                                        "genres": {
+                                                                            "type": "array",
+                                                                            "items": {
+                                                                                "properties": {
+                                                                                    "id": {
+                                                                                        "type": "string",
+                                                                                        "format": "uuid",
+                                                                                        "example": "901e2345-e89b-12d3-a456-426614174000"
+                                                                                    },
+                                                                                    "name": {
+                                                                                        "type": "string",
+                                                                                        "example": "Electronic"
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "photos": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string",
+                                                                    "format": "uuid",
+                                                                    "example": "234e5678-e89b-12d3-a456-426614174000"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "example": "https://example.com/photos/checkin.jpg"
+                                                                },
+                                                                "caption": {
+                                                                    "type": "string",
+                                                                    "example": "Amazing night!",
+                                                                    "nullable": true
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "likes_count": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "comments_count": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "comments": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string",
+                                                                    "format": "uuid",
+                                                                    "example": "567e8901-e89b-12d3-a456-426614174000"
+                                                                },
+                                                                "comment": {
+                                                                    "type": "string",
+                                                                    "example": "Looks amazing!"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time",
+                                                                    "example": "2024-07-19T20:00:00Z"
+                                                                },
+                                                                "user": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "string",
+                                                                            "format": "uuid",
+                                                                            "example": "890e1234-e89b-12d3-a456-426614174000"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Jane Smith"
+                                                                        },
+                                                                        "username": {
+                                                                            "type": "string",
+                                                                            "example": "janesmith"
+                                                                        },
+                                                                        "profile_photo_url": {
+                                                                            "type": "string",
+                                                                            "example": "https://example.com/photos/jane.jpg",
+                                                                            "nullable": true
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "is_liked": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    },
+                                                    "rating": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 4.5,
+                                                        "nullable": true
+                                                    },
+                                                    "review": {
+                                                        "type": "string",
+                                                        "example": "Incredible experience!",
+                                                        "nullable": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-07-19T19:30:00Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-07-19T19:30:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users/123e4567-e89b-12d3-a456-426614174000/check-ins?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users/123e4567-e89b-12d3-a456-426614174000/check-ins?page=3"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users/123e4567-e89b-12d3-a456-426614174000/check-ins?page=2"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
         }
     },
     "components": {
