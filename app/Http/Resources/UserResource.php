@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserResource extends JsonResource
 {
@@ -15,12 +16,29 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $isAuthenticated = Auth::check();
-        $isCurrentUser = $isAuthenticated && Auth::id() === $this->id;
+        $isAuthenticated = Auth::guard('api')->check();
+        $isCurrentUser = $isAuthenticated && Auth::guard('api')->id() === $this->id;
         $isFollowing = false;
 
         if ($isAuthenticated) {
-            $isFollowing = $this->followers()->where('follower_id', Auth::id())->exists();
+            $isFollowing = $this->followers()->where('follower_id', Auth::guard('api')->id())->exists();
+
+            // Debug logging
+            Log::info('UserResource Debug', [
+                'authenticated_user_id' => Auth::guard('api')->id(),
+                'profile_user_id' => $this->id,
+                'authenticated_user_id_type' => gettype(Auth::guard('api')->id()),
+                'profile_user_id_type' => gettype($this->id),
+                'ids_equal' => Auth::guard('api')->id() === $this->id,
+                'ids_equal_loose' => Auth::guard('api')->id() == $this->id,
+                'is_authenticated' => $isAuthenticated,
+                'is_current_user' => $isCurrentUser,
+                'is_following' => $isFollowing,
+                'followers_count' => $this->followers()->count(),
+                'direct_check' => \App\Models\Follower::where('follower_id', Auth::guard('api')->id())
+                    ->where('followed_id', $this->id)
+                    ->exists()
+            ]);
         }
 
         $data = [

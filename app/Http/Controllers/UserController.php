@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\CheckinResource;
 use App\Models\User;
+use App\Models\Follower;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\Tag(
@@ -77,6 +81,19 @@ class UserController extends Controller
     {
         $user = User::with(['country', 'followers', 'following', 'checkins'])
             ->findOrFail($id);
+
+        // Debug authentication state
+        Log::info('UserController Debug', [
+            'requested_user_id' => $id,
+            'auth_check' => Auth::guard('api')->check(),
+            'auth_id' => Auth::guard('api')->id(),
+            'user_id' => $user->id,
+            'is_current_user' => Auth::guard('api')->check() && Auth::guard('api')->id() === $user->id,
+            'authorization_header' => request()->header('Authorization'),
+            'token_exists' => request()->bearerToken() ? 'yes' : 'no',
+            'token' => request()->bearerToken(),
+            'guard' => Auth::getDefaultDriver(),
+        ]);
 
         return new UserResource($user);
     }
