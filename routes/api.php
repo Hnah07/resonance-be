@@ -21,6 +21,7 @@ use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\SummaryStatsController;
 use App\Http\Controllers\StatsController;
+use App\Http\Controllers\UserController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -30,7 +31,14 @@ use App\Http\Controllers\StatsController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Protected routes with auth:sanctum
+// Public user routes
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/search', [UserController::class, 'search']);
+Route::get('/users/{id}', [UserController::class, 'show']);
+Route::get('/users/{id}/followers', [FollowerController::class, 'getFollowers']);
+Route::get('/users/{id}/following', [FollowerController::class, 'getFollowing']);
+
+// Protected routes that require authentication
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
@@ -39,6 +47,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/timeline', [TimelineController::class, 'index']);
     Route::get('/summary-stats', [SummaryStatsController::class, 'index']);
 
+    // Follow/unfollow actions
+    Route::post('/followers', [FollowerController::class, 'store']);
+    Route::delete('/followers/{id}', [FollowerController::class, 'destroy']);
+
+    // Other authenticated routes
     Route::apiResource('checkins', CheckinController::class)->only(['index', 'store', 'show', 'destroy']);
     Route::apiResource('checkin-photos', CheckinPhotoController::class);
     Route::apiResource('checkin-comments', CheckinCommentController::class);
