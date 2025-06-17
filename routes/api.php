@@ -51,6 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Follow/unfollow actions
     Route::post('/followers', [FollowerController::class, 'store']);
     Route::delete('/followers/{id}', [FollowerController::class, 'destroy']);
+    Route::post('/users/{user}/follow', [UserController::class, 'follow']);
+    Route::delete('/users/{user}/follow', [UserController::class, 'unfollow']);
 
     // Other authenticated routes
     Route::apiResource('checkins', CheckinController::class)->only(['index', 'store', 'show', 'destroy']);

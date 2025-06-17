@@ -430,4 +430,112 @@ class UserController extends Controller
 
         return CheckinResource::collection($checkins);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/users/{user}/follow",
+     *     summary="Follow a user",
+     *     description="Follow a specific user by their ID",
+     *     tags={"Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="user",
+     *         in="path",
+     *         required=true,
+     *         description="User UUID to follow",
+     *         @OA\Schema(
+     *             type="string",
+     *             format="uuid",
+     *             example="123e4567-e89b-12d3-a456-426614174000"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Successfully followed user",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Successfully followed user"),
+     *             @OA\Property(
+     *                 property="follower",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="string", format="uuid"),
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="username", type="string")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=404, description="User not found"),
+     *     @OA\Response(response=409, description="Already following this user"),
+     *     @OA\Response(response=422, description="Cannot follow yourself")
+     * )
+     */
+    public function follow(string $user): JsonResponse
+    {
+        $userToFollow = User::findOrFail($user);
+
+        // Prevent self-following
+        if ($userToFollow->id === Auth::id()) {
+            return response()->json(['message' => 'You cannot follow yourself'], 422);
+        }
+
+        // Check if already following
+        $existingFollow = Follower::where('follower_id', Auth::id())
+            ->where('followed_id', $userToFollow->id)
+            ->first();
+
+        if ($existingFollow) {
+            return response()->json(['message' => 'You are already following this user'], 409);
+        }
+
+        $follower = Follower::create([
+            'follower_id' => Auth::id(),
+            'followed_id' => $userToFollow->id
+        ]);
+
+        return response()->json([
+            'message' => 'Successfully followed user',
+            'follower' => $follower->load('followed:id,name,username')
+        ], 201);
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/users/{user}/follow",
+     *     summary="Unfollow a user",
+     *     description="Unfollow a specific user by their ID",
+     *     tags={"Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="user",
+     *         in="path",
+     *         required=true,
+     *         description="User UUID to unfollow",
+     *         @OA\Schema(
+     *             type="string",
+     *             format="uuid",
+     *             example="123e4567-e89b-12d3-a456-426614174000"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Successfully unfollowed user"
+     *     ),
+     *     @OA\Response(response=401, description="Unauthenticated"),
+     *     @OA\Response(response=404, description="Follow relationship not found")
+     * )
+     */
+    public function unfollow(string $user): JsonResponse
+    {
+        $follow = Follower::where('follower_id', Auth::id())
+            ->where('followed_id', $user)
+            ->first();
+
+        if (!$follow) {
+            return response()->json(['message' => 'Follow relationship not found'], 404);
+        }
+
+        $follow->delete();
+        return response()->json(null, 204);
+    }
 }
