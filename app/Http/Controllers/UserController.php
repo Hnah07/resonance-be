@@ -432,6 +432,104 @@ class UserController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/users/{userId}/summary-stats",
+     *     summary="Get summary statistics for a specific user",
+     *     description="Retrieve summary statistics including followers, following, check-ins, concerts, and artists for a specific user",
+     *     tags={"Users"},
+     *     @OA\Parameter(
+     *         name="userId",
+     *         in="path",
+     *         required=true,
+     *         description="User UUID",
+     *         @OA\Schema(
+     *             type="string",
+     *             format="uuid",
+     *             example="123e4567-e89b-12d3-a456-426614174000"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User summary statistics retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="user_id", type="string", format="uuid", example="123e4567-e89b-12d3-a456-426614174000"),
+     *                 @OA\Property(property="followers_count", type="integer", example=42),
+     *                 @OA\Property(property="following_count", type="integer", example=15),
+     *                 @OA\Property(property="checkins_count", type="integer", example=67),
+     *                 @OA\Property(property="concerts_count", type="integer", example=23),
+     *                 @OA\Property(property="artists_count", type="integer", example=18),
+     *                 @OA\Property(property="total_rating", type="number", format="float", example=4.2),
+     *                 @OA\Property(property="average_rating", type="number", format="float", example=4.1),
+     *                 @OA\Property(property="reviews_count", type="integer", example=12),
+     *                 @OA\Property(property="photos_count", type="integer", example=45),
+     *                 @OA\Property(property="likes_received", type="integer", example=156),
+     *                 @OA\Property(property="comments_received", type="integer", example=89)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
+    public function summaryStats(string $userId): JsonResponse
+    {
+        $user = User::findOrFail($userId);
+
+        // Get basic counts
+        $followersCount = $user->followers()->count();
+        $followingCount = $user->following()->count();
+        $checkinsCount = $user->checkins()->count();
+
+        // Get unique concerts and artists from check-ins
+        $concertsCount = $user->checkins()->distinct('concert_id')->count();
+        $artistsCount = $user->checkins()
+            ->join('artist_checkins', 'checkins.id', '=', 'artist_checkins.checkin_id')
+            ->distinct('artist_checkins.artist_id')
+            ->count();
+
+        // Get rating statistics
+        $ratingStats = $user->checkins()
+            ->join('checkin_ratings', 'checkins.id', '=', 'checkin_ratings.checkin_id')
+            ->selectRaw('COUNT(*) as reviews_count, AVG(checkin_ratings.rating) as average_rating, SUM(checkin_ratings.rating) as total_rating')
+            ->first();
+
+        // Get photos count
+        $photosCount = $user->checkins()
+            ->join('checkin_photos', 'checkins.id', '=', 'checkin_photos.checkin_id')
+            ->count();
+
+        // Get likes and comments received
+        $likesReceived = $user->checkins()
+            ->join('checkin_likes', 'checkins.id', '=', 'checkin_likes.checkin_id')
+            ->count();
+
+        $commentsReceived = $user->checkins()
+            ->join('checkin_comments', 'checkins.id', '=', 'checkin_comments.checkin_id')
+            ->count();
+
+        return response()->json([
+            'data' => [
+                'user_id' => $user->id,
+                'followers_count' => $followersCount,
+                'following_count' => $followingCount,
+                'checkins_count' => $checkinsCount,
+                'concerts_count' => $concertsCount,
+                'artists_count' => $artistsCount,
+                'total_rating' => $ratingStats->total_rating ?? 0,
+                'average_rating' => round($ratingStats->average_rating ?? 0, 2),
+                'reviews_count' => $ratingStats->reviews_count ?? 0,
+                'photos_count' => $photosCount,
+                'likes_received' => $likesReceived,
+                'comments_received' => $commentsReceived,
+            ]
+        ]);
+    }
+
+    /**
      * @OA\Post(
      *     path="/api/users/{user}/follow",
      *     summary="Follow a user",
