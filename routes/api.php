@@ -34,7 +34,16 @@ Route::post('/login', [AuthController::class, 'login']);
 // Public user routes
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/search', [UserController::class, 'search']);
-Route::get('/users/{id}', [UserController::class, 'show']);
+
+// Username-based user routes (more specific - must come first)
+Route::get('/users/{username}/summary-stats', [UserController::class, 'summaryStatsByUsername']);
+Route::get('/users/{username}/stats', [UserController::class, 'statsByUsername']);
+Route::get('/users/{username}/photos', [UserController::class, 'photosByUsername']);
+Route::get('/users/{username}/friends', [UserController::class, 'friendsByUsername']);
+Route::get('/users/{username}/check-ins', [UserController::class, 'checkinsByUsername']);
+Route::get('/users/{username}', [UserController::class, 'showByUsername']);
+
+// ID-based user routes (more general - must come after username routes)
 Route::get('/users/{id}/check-ins', [UserController::class, 'checkins']);
 Route::get('/users/{userId}/summary-stats', [UserController::class, 'summaryStats']);
 Route::get('/users/{userId}/stats', [UserController::class, 'stats']);
@@ -42,6 +51,7 @@ Route::get('/users/{userId}/photos', [UserController::class, 'photos']);
 Route::get('/users/{userId}/friends', [UserController::class, 'friends']);
 Route::get('/users/{id}/followers', [FollowerController::class, 'getFollowers']);
 Route::get('/users/{id}/following', [FollowerController::class, 'getFollowing']);
+Route::get('/users/{id}', [UserController::class, 'show']);
 
 // Protected routes that require authentication
 Route::middleware('auth:sanctum')->group(function () {
@@ -57,6 +67,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/followers/{id}', [FollowerController::class, 'destroy']);
     Route::post('/users/{user}/follow', [UserController::class, 'follow']);
     Route::delete('/users/{user}/follow', [UserController::class, 'unfollow']);
+    Route::post('/users/{username}/follow', [UserController::class, 'followByUsername']);
+    Route::delete('/users/{username}/follow', [UserController::class, 'unfollowByUsername']);
 
     // Other authenticated routes
     Route::apiResource('checkins', CheckinController::class)->only(['index', 'store', 'show', 'destroy']);
