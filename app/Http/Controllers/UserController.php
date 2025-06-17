@@ -12,6 +12,8 @@ use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use App\Models\Checkin;
 
 /**
  * @OA\Tag(
@@ -526,6 +528,399 @@ class UserController extends Controller
                 'likes_received' => $likesReceived,
                 'comments_received' => $commentsReceived,
             ]
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/users/{userId}/stats",
+     *     summary="Get detailed statistics for a specific user",
+     *     description="Retrieve detailed statistics including monthly attendance, genre distribution, top venues, and top artists for a specific user",
+     *     tags={"Users"},
+     *     @OA\Parameter(
+     *         name="userId",
+     *         in="path",
+     *         required=true,
+     *         description="User UUID",
+     *         @OA\Schema(
+     *             type="string",
+     *             format="uuid",
+     *             example="123e4567-e89b-12d3-a456-426614174000"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User detailed statistics retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="followers_count", type="integer", example=42),
+     *             @OA\Property(property="following_count", type="integer", example=15),
+     *             @OA\Property(property="followers", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="string", format="uuid"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="username", type="string"),
+     *                     @OA\Property(property="profile_photo_path", type="string", nullable=true)
+     *                 )
+     *             ),
+     *             @OA\Property(property="following", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="string", format="uuid"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="username", type="string"),
+     *                     @OA\Property(property="profile_photo_path", type="string", nullable=true)
+     *                 )
+     *             ),
+     *             @OA\Property(property="monthly_attendance", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="month_number", type="integer", example=1),
+     *                     @OA\Property(property="month", type="string", example="Jan"),
+     *                     @OA\Property(property="count", type="integer", example=5)
+     *                 )
+     *             ),
+     *             @OA\Property(property="genre_distribution", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="genre", type="string", example="Electronic"),
+     *                     @OA\Property(property="count", type="integer", example=15)
+     *                 )
+     *             ),
+     *             @OA\Property(property="top_venues", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="venue", type="string", example="Tomorrowland"),
+     *                     @OA\Property(property="count", type="integer", example=3)
+     *                 )
+     *             ),
+     *             @OA\Property(property="top_artists", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="artist", type="string", example="Martin Garrix"),
+     *                     @OA\Property(property="image", type="string", nullable=true),
+     *                     @OA\Property(property="count", type="integer", example=2)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
+    public function stats(string $userId): JsonResponse
+    {
+        $user = User::findOrFail($userId);
+
+        // Get followers (users that follow this user)
+        $followers = User::select('users.id', 'users.name', 'users.username', 'users.profile_photo_path')
+            ->join('followers', 'users.id', '=', 'followers.follower_id')
+            ->where('followers.followed_id', $user->id)
+            ->get();
+
+        // Get following (users that this user follows)
+        $following = User::select('users.id', 'users.name', 'users.username', 'users.profile_photo_path')
+            ->join('followers', 'users.id', '=', 'followers.followed_id')
+            ->where('followers.follower_id', $user->id)
+            ->get();
+
+        // Monthly concert attendance based on concert dates
+        $monthlyAttendance = Checkin::where('user_id', $user->id)
+            ->join('concerts', 'checkins.concert_id', '=', 'concerts.id')
+            ->select(
+                DB::raw('MONTH(concerts.date) as month_number'),
+                DB::raw('DATE_FORMAT(concerts.date, "%b") as month'),
+                DB::raw('COUNT(DISTINCT checkins.id) as count')
+            )
+            ->groupBy('month_number', 'month')
+            ->orderBy('month_number')
+            ->get();
+
+        // Genre distribution
+        $genreDistribution = Checkin::where('user_id', $user->id)
+            ->join('artist_checkins', 'checkins.id', '=', 'artist_checkins.checkin_id')
+            ->join('artists', 'artist_checkins.artist_id', '=', 'artists.id')
+            ->join('artist_genres', 'artists.id', '=', 'artist_genres.artist_id')
+            ->join('genres', 'artist_genres.genre_id', '=', 'genres.id')
+            ->select('genres.genre as genre', DB::raw('COUNT(DISTINCT checkins.id) as count'))
+            ->groupBy('genres.id', 'genres.genre')
+            ->orderByDesc('count')
+            ->get();
+
+        // Top venues
+        $topVenues = Checkin::where('user_id', $user->id)
+            ->join('concerts', 'checkins.concert_id', '=', 'concerts.id')
+            ->join('locations', 'concerts.location_id', '=', 'locations.id')
+            ->select('locations.name as venue', DB::raw('COUNT(DISTINCT checkins.id) as count'))
+            ->groupBy('locations.id', 'locations.name')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
+        // Top artists
+        $topArtists = Checkin::where('user_id', $user->id)
+            ->join('artist_checkins', 'checkins.id', '=', 'artist_checkins.checkin_id')
+            ->join('artists', 'artist_checkins.artist_id', '=', 'artists.id')
+            ->select(
+                'artists.name as artist',
+                'artists.image_url as image',
+                DB::raw('COUNT(DISTINCT checkins.id) as count')
+            )
+            ->groupBy('artists.id', 'artists.name', 'artists.image_url')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
+        return response()->json([
+            'followers_count' => $followers->count(),
+            'following_count' => $following->count(),
+            'followers' => $followers,
+            'following' => $following,
+            'monthly_attendance' => $monthlyAttendance,
+            'genre_distribution' => $genreDistribution,
+            'top_venues' => $topVenues,
+            'top_artists' => $topArtists
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/users/{userId}/photos",
+     *     summary="Get all photos for a specific user",
+     *     description="Retrieve all check-in photos for a specific user, ordered by creation date (newest first)",
+     *     tags={"Users"},
+     *     @OA\Parameter(
+     *         name="userId",
+     *         in="path",
+     *         required=true,
+     *         description="User UUID",
+     *         @OA\Schema(
+     *             type="string",
+     *             format="uuid",
+     *             example="123e4567-e89b-12d3-a456-426614174000"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="Page number for pagination",
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1,
+     *             minimum=1,
+     *             example=1
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         required=false,
+     *         description="Number of photos per page",
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=20,
+     *             minimum=1,
+     *             maximum=100,
+     *             example=20
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User photos retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="string", format="uuid"),
+     *                     @OA\Property(property="url", type="string"),
+     *                     @OA\Property(property="caption", type="string", nullable=true),
+     *                     @OA\Property(property="checkin", type="object",
+     *                         @OA\Property(property="id", type="string", format="uuid"),
+     *                         @OA\Property(property="concert", type="object",
+     *                             @OA\Property(property="date", type="string", format="date"),
+     *                             @OA\Property(property="event", type="object",
+     *                                 @OA\Property(property="name", type="string"),
+     *                                 @OA\Property(property="type", type="string")
+     *                             ),
+     *                             @OA\Property(property="location", type="object",
+     *                                 @OA\Property(property="name", type="string"),
+     *                                 @OA\Property(property="city", type="string")
+     *                             )
+     *                         ),
+     *                         @OA\Property(property="created_at", type="string", format="date-time")
+     *                     ),
+     *                     @OA\Property(property="created_at", type="string", format="date-time")
+     *                 )
+     *             ),
+     *             @OA\Property(property="links", type="object"),
+     *             @OA\Property(property="meta", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
+    public function photos(Request $request, string $userId): JsonResponse
+    {
+        $user = User::findOrFail($userId);
+
+        $photos = $user->checkins()
+            ->join('checkin_photos', 'checkins.id', '=', 'checkin_photos.checkin_id')
+            ->join('concerts', 'checkins.concert_id', '=', 'concerts.id')
+            ->join('events', 'concerts.event_id', '=', 'events.id')
+            ->join('locations', 'concerts.location_id', '=', 'locations.id')
+            ->select(
+                'checkin_photos.id',
+                'checkin_photos.url',
+                'checkin_photos.caption',
+                'checkin_photos.created_at',
+                'checkins.id as checkin_id',
+                'checkins.created_at as checkin_created_at',
+                'concerts.date',
+                'events.name as event_name',
+                'events.type as event_type',
+                'locations.name as location_name',
+                'locations.city'
+            )
+            ->orderBy('checkin_photos.created_at', 'desc')
+            ->paginate($request->input('per_page', 20));
+
+        $formattedPhotos = $photos->getCollection()->map(function ($photo) {
+            return [
+                'id' => $photo->id,
+                'url' => $photo->url,
+                'caption' => $photo->caption,
+                'checkin' => [
+                    'id' => $photo->checkin_id,
+                    'concert' => [
+                        'date' => $photo->date,
+                        'event' => [
+                            'name' => $photo->event_name,
+                            'type' => $photo->event_type
+                        ],
+                        'location' => [
+                            'name' => $photo->location_name,
+                            'city' => $photo->city
+                        ]
+                    ],
+                    'created_at' => $photo->checkin_created_at
+                ],
+                'created_at' => $photo->created_at
+            ];
+        });
+
+        return response()->json([
+            'data' => $formattedPhotos,
+            'links' => $photos->links(),
+            'meta' => [
+                'current_page' => $photos->currentPage(),
+                'from' => $photos->firstItem(),
+                'last_page' => $photos->lastPage(),
+                'per_page' => $photos->perPage(),
+                'to' => $photos->lastItem(),
+                'total' => $photos->total()
+            ]
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/users/{userId}/friends",
+     *     summary="Get friends (followers and following) for a specific user",
+     *     description="Retrieve both followers and users being followed by a specific user",
+     *     tags={"Users"},
+     *     @OA\Parameter(
+     *         name="userId",
+     *         in="path",
+     *         required=true,
+     *         description="User UUID",
+     *         @OA\Schema(
+     *             type="string",
+     *             format="uuid",
+     *             example="123e4567-e89b-12d3-a456-426614174000"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User friends retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="followers", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="string", format="uuid"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="username", type="string"),
+     *                     @OA\Property(property="profile_photo_path", type="string", nullable=true),
+     *                     @OA\Property(property="bio", type="string", nullable=true),
+     *                     @OA\Property(property="city", type="string", nullable=true),
+     *                     @OA\Property(property="country_name", type="string", nullable=true)
+     *                 )
+     *             ),
+     *             @OA\Property(property="following", type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="string", format="uuid"),
+     *                     @OA\Property(property="name", type="string"),
+     *                     @OA\Property(property="username", type="string"),
+     *                     @OA\Property(property="profile_photo_path", type="string", nullable=true),
+     *                     @OA\Property(property="bio", type="string", nullable=true),
+     *                     @OA\Property(property="city", type="string", nullable=true),
+     *                     @OA\Property(property="country_name", type="string", nullable=true)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
+    public function friends(string $userId): JsonResponse
+    {
+        $user = User::findOrFail($userId);
+
+        // Get followers (users that follow this user)
+        $followers = User::select(
+            'users.id',
+            'users.name',
+            'users.username',
+            'users.profile_photo_path',
+            'users.bio',
+            'users.city',
+            'countries.name as country_name'
+        )
+            ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
+            ->join('followers', 'users.id', '=', 'followers.follower_id')
+            ->where('followers.followed_id', $user->id)
+            ->get();
+
+        // Get following (users that this user follows)
+        $following = User::select(
+            'users.id',
+            'users.name',
+            'users.username',
+            'users.profile_photo_path',
+            'users.bio',
+            'users.city',
+            'countries.name as country_name'
+        )
+            ->leftJoin('countries', 'users.country_id', '=', 'countries.id')
+            ->join('followers', 'users.id', '=', 'followers.followed_id')
+            ->where('followers.follower_id', $user->id)
+            ->get();
+
+        return response()->json([
+            'followers' => $followers,
+            'following' => $following
         ]);
     }
 

@@ -37,6 +37,9 @@ Route::get('/users/search', [UserController::class, 'search']);
 Route::get('/users/{id}', [UserController::class, 'show']);
 Route::get('/users/{id}/check-ins', [UserController::class, 'checkins']);
 Route::get('/users/{userId}/summary-stats', [UserController::class, 'summaryStats']);
+Route::get('/users/{userId}/stats', [UserController::class, 'stats']);
+Route::get('/users/{userId}/photos', [UserController::class, 'photos']);
+Route::get('/users/{userId}/friends', [UserController::class, 'friends']);
 Route::get('/users/{id}/followers', [FollowerController::class, 'getFollowers']);
 Route::get('/users/{id}/following', [FollowerController::class, 'getFollowing']);
 
