@@ -65,8 +65,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Follow/unfollow actions
     Route::post('/followers', [FollowerController::class, 'store']);
     Route::delete('/followers/{id}', [FollowerController::class, 'destroy']);
-    Route::post('/users/{user}/follow', [UserController::class, 'follow']);
-    Route::delete('/users/{user}/follow', [UserController::class, 'unfollow']);
     Route::post('/users/{username}/follow', [UserController::class, 'followByUsername']);
     Route::delete('/users/{username}/follow', [UserController::class, 'unfollowByUsername']);
 
