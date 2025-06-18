@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Models\Checkin;
+use Carbon\Carbon;
+use App\Models\Genre;
+use App\Models\Artist;
+use App\Models\Location;
 
 /**
  * @OA\Tag(
@@ -1100,7 +1104,7 @@ class UserController extends Controller
      * @OA\Get(
      *     path="/api/users/{username}/summary-stats",
      *     summary="Get summary statistics for a specific user by username",
-     *     description="Retrieve summary statistics including followers, following, check-ins, concerts, and artists for a specific user",
+     *     description="Retrieve summary statistics including concerts this year, total concerts, countries visited, favorite genre, most seen artist, and top venue for a specific user",
      *     tags={"Users"},
      *     @OA\Parameter(
      *         name="username",
@@ -1117,19 +1121,21 @@ class UserController extends Controller
      *         description="User summary statistics retrieved successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="user_id", type="string", format="uuid", example="123e4567-e89b-12d3-a456-426614174000"),
-     *                 @OA\Property(property="followers_count", type="integer", example=42),
-     *                 @OA\Property(property="following_count", type="integer", example=15),
-     *                 @OA\Property(property="checkins_count", type="integer", example=67),
-     *                 @OA\Property(property="concerts_count", type="integer", example=23),
-     *                 @OA\Property(property="artists_count", type="integer", example=18),
-     *                 @OA\Property(property="total_rating", type="number", format="float", example=4.2),
-     *                 @OA\Property(property="average_rating", type="number", format="float", example=4.1),
-     *                 @OA\Property(property="reviews_count", type="integer", example=12),
-     *                 @OA\Property(property="photos_count", type="integer", example=45),
-     *                 @OA\Property(property="likes_received", type="integer", example=156),
-     *                 @OA\Property(property="comments_received", type="integer", example=89)
+     *             @OA\Property(property="concerts_this_year", type="integer", example=12),
+     *             @OA\Property(property="total_concerts", type="integer", example=45),
+     *             @OA\Property(property="countries_visited", type="integer", example=5),
+     *             @OA\Property(property="countries_list", type="array", @OA\Items(type="string")),
+     *             @OA\Property(property="favorite_genre", type="object",
+     *                 @OA\Property(property="genre", type="string", example="Rock"),
+     *                 @OA\Property(property="count", type="integer", example=15)
+     *             ),
+     *             @OA\Property(property="most_seen_artist", type="object",
+     *                 @OA\Property(property="name", type="string", example="Arctic Monkeys"),
+     *                 @OA\Property(property="count", type="integer", example=3)
+     *             ),
+     *             @OA\Property(property="top_venue", type="object",
+     *                 @OA\Property(property="name", type="string", example="Sportpaleis"),
+     *                 @OA\Property(property="count", type="integer", example=8)
      *             )
      *         )
      *     ),
@@ -1142,54 +1148,77 @@ class UserController extends Controller
     public function summaryStatsByUsername(string $username): JsonResponse
     {
         $user = User::where('username', $username)->firstOrFail();
+        $userId = $user->id;
+        $currentYear = Carbon::now()->year;
 
-        // Get basic counts
-        $followersCount = $user->followers()->count();
-        $followingCount = $user->following()->count();
-        $checkinsCount = $user->checkins()->count();
-
-        // Get unique concerts and artists from check-ins
-        $concertsCount = $user->checkins()->distinct('concert_id')->count();
-        $artistsCount = $user->checkins()
-            ->join('artist_checkins', 'checkins.id', '=', 'artist_checkins.checkin_id')
-            ->distinct('artist_checkins.artist_id')
+        // Concerts this year
+        $concertsThisYear = Checkin::where('user_id', $userId)
+            ->whereHas('concert', function ($query) use ($currentYear) {
+                $query->whereYear('date', $currentYear);
+            })
             ->count();
 
-        // Get rating statistics
-        $ratingStats = $user->checkins()
-            ->join('checkin_ratings', 'checkins.id', '=', 'checkin_ratings.checkin_id')
-            ->selectRaw('COUNT(*) as reviews_count, AVG(checkin_ratings.rating) as average_rating, SUM(checkin_ratings.rating) as total_rating')
+        // Total concerts attended
+        $totalConcerts = Checkin::where('user_id', $userId)->count();
+
+        // Countries visited
+        $countriesVisited = Checkin::where('checkins.user_id', $userId)
+            ->join('concerts', 'checkins.concert_id', '=', 'concerts.id')
+            ->join('locations', 'concerts.location_id', '=', 'locations.id')
+            ->join('countries', 'locations.country_id', '=', 'countries.id')
+            ->select('countries.id', 'countries.name')
+            ->distinct()
+            ->get();
+
+        $countriesCount = $countriesVisited->count();
+        $countriesList = $countriesVisited->pluck('name')->toArray();
+
+        // Favorite genre
+        $favoriteGenre = Genre::select('genres.genre', DB::raw('COUNT(*) as count'))
+            ->join('artist_genres', 'genres.id', '=', 'artist_genres.genre_id')
+            ->join('artists', 'artist_genres.artist_id', '=', 'artists.id')
+            ->join('artist_checkins', 'artists.id', '=', 'artist_checkins.artist_id')
+            ->join('checkins', 'artist_checkins.checkin_id', '=', 'checkins.id')
+            ->where('checkins.user_id', $userId)
+            ->groupBy('genres.id', 'genres.genre')
+            ->orderByDesc('count')
             ->first();
 
-        // Get photos count
-        $photosCount = $user->checkins()
-            ->join('checkin_photos', 'checkins.id', '=', 'checkin_photos.checkin_id')
-            ->count();
+        // Most seen artist
+        $mostSeenArtist = Artist::select('artists.name', DB::raw('COUNT(*) as count'))
+            ->join('artist_checkins', 'artists.id', '=', 'artist_checkins.artist_id')
+            ->join('checkins', 'artist_checkins.checkin_id', '=', 'checkins.id')
+            ->where('checkins.user_id', $userId)
+            ->groupBy('artists.id', 'artists.name')
+            ->orderByDesc('count')
+            ->first();
 
-        // Get likes and comments received
-        $likesReceived = $user->checkins()
-            ->join('checkin_likes', 'checkins.id', '=', 'checkin_likes.checkin_id')
-            ->count();
-
-        $commentsReceived = $user->checkins()
-            ->join('checkin_comments', 'checkins.id', '=', 'checkin_comments.checkin_id')
-            ->count();
+        // Top venue
+        $topVenue = Location::select('locations.name', DB::raw('COUNT(*) as count'))
+            ->join('concerts', 'locations.id', '=', 'concerts.location_id')
+            ->join('checkins', 'concerts.id', '=', 'checkins.concert_id')
+            ->where('checkins.user_id', $userId)
+            ->groupBy('locations.id', 'locations.name')
+            ->orderByDesc('count')
+            ->first();
 
         return response()->json([
-            'data' => [
-                'user_id' => $user->id,
-                'followers_count' => $followersCount,
-                'following_count' => $followingCount,
-                'checkins_count' => $checkinsCount,
-                'concerts_count' => $concertsCount,
-                'artists_count' => $artistsCount,
-                'total_rating' => $ratingStats->total_rating ?? 0,
-                'average_rating' => round($ratingStats->average_rating ?? 0, 2),
-                'reviews_count' => $ratingStats->reviews_count ?? 0,
-                'photos_count' => $photosCount,
-                'likes_received' => $likesReceived,
-                'comments_received' => $commentsReceived,
-            ]
+            'concerts_this_year' => $concertsThisYear,
+            'total_concerts' => $totalConcerts,
+            'countries_visited' => $countriesCount,
+            'countries_list' => $countriesList,
+            'favorite_genre' => $favoriteGenre ? [
+                'genre' => $favoriteGenre->genre,
+                'count' => $favoriteGenre->count
+            ] : null,
+            'most_seen_artist' => $mostSeenArtist ? [
+                'name' => $mostSeenArtist->name,
+                'count' => $mostSeenArtist->count
+            ] : null,
+            'top_venue' => $topVenue ? [
+                'name' => $topVenue->name,
+                'count' => $topVenue->count
+            ] : null
         ]);
     }
 
