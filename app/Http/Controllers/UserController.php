@@ -414,7 +414,7 @@ class UserController extends Controller
         $checkins = $user->checkins()
             ->with([
                 'user:id,name,username,profile_photo_path',
-                'concert:id,date,event_id',
+                'concert:id,date,event_id,location_id',
                 'concert.event:id,name,type,image_url',
                 'concert.location:id,name,city,country_id',
                 'concert.location.country:id,name',
@@ -1838,7 +1838,7 @@ class UserController extends Controller
         $checkins = $user->checkins()
             ->with([
                 'user:id,name,username,profile_photo_path',
-                'concert:id,date,event_id',
+                'concert:id,date,event_id,location_id',
                 'concert.event:id,name,type,image_url',
                 'concert.location:id,name,city,country_id',
                 'concert.location.country:id,name',
