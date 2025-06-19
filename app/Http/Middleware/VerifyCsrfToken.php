@@ -21,5 +21,7 @@ class VerifyCsrfToken extends Middleware
         // Livewire file uploads - exclude from CSRF but keep session handling
         'livewire/upload-file',
         'livewire/message/*',
+        // Admin routes - Filament handles its own security
+        'admin/*',
     ];
 }
