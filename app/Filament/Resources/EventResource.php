@@ -133,8 +133,7 @@ class EventResource extends Resource
                     ->square()
                     ->defaultImageUrl(url('/images/placeholder.jpg'))
                     ->disk('public')
-                    ->visibility('public')
-                    ->url(fn($record) => $record->image_url ? asset('storage/' . $record->image_url) : null),
+                    ->visibility('public'),
 
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
