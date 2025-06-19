@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Laravel\Sanctum\Sanctum;
 use App\Models\PersonalAccessToken;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,5 +30,20 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
+
+        // Ensure Livewire upload routes use proper session handling
+        Route::matched(function ($route) {
+            if (str_starts_with($route->uri(), 'livewire/upload-file')) {
+                // Ensure session is started for Livewire uploads
+                if (!session()->isStarted()) {
+                    session()->start();
+                }
+
+                // Check authentication
+                if (!Auth::check()) {
+                    abort(401, 'Unauthorized');
+                }
+            }
+        });
     }
 }

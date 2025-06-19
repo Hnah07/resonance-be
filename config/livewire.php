@@ -95,7 +95,7 @@ return [
         'disk' => 'public',        // Use public disk for temporary uploads
         'rules' => ['required', 'file', 'max:12288'], // 12MB max file size
         'directory' => 'livewire-tmp',   // Temporary directory
-        'middleware' => null,  // Let Livewire handle middleware internally
+        'middleware' => 'web',  // Use web middleware group for proper session handling
         'preview_mimes' => [   // Supported file types for temporary pre-signed file URLs...
             'png',
             'gif',
