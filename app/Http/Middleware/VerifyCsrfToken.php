@@ -17,6 +17,9 @@ class VerifyCsrfToken extends Middleware
         // But keep CSRF protection for Sanctum routes
         'sanctum/csrf-cookie',
         'login',
-        'logout'
+        'logout',
+        // Livewire file uploads
+        'livewire/upload-file',
+        'livewire/message/*'
     ];
 }
