@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 Route::get('/', function () {
     return view('welcome');
@@ -110,16 +111,34 @@ Route::get('/debug-upload', function () {
     ]);
 })->middleware(['web']);
 
+// Debug route to check session and cookie configuration
 Route::get('/debug-session', function () {
+    $session = session();
+
     return response()->json([
-        'session_id' => session()->getId(),
-        'session_data' => session()->all(),
-        'authenticated' => Auth::check(),
-        'user_id' => Auth::id(),
-        'user_email' => Auth::user() ? Auth::user()->email : null,
-        'cookies' => request()->cookies->all(),
+        'session_id' => $session->getId(),
+        'session_driver' => config('session.driver'),
+        'session_lifetime' => config('session.lifetime'),
+        'session_cookie' => config('session.cookie'),
+        'session_domain' => config('session.domain'),
+        'session_secure' => config('session.secure'),
+        'session_same_site' => config('session.same_site'),
+        'session_http_only' => config('session.http_only'),
+        'app_env' => config('app.env'),
+        'app_url' => config('app.url'),
+        'csrf_token' => csrf_token(),
+        'has_csrf_cookie' => request()->hasCookie('XSRF-TOKEN'),
+        'csrf_cookie_value' => request()->cookie('XSRF-TOKEN'),
+        'all_cookies' => request()->cookies->all(),
+        'session_data' => $session->all(),
+        'session_exists_in_db' => DB::table('sessions')->where('id', $session->getId())->exists(),
+        'total_sessions_in_db' => DB::table('sessions')->count(),
+        'response_headers' => [
+            'set_cookie' => request()->header('Set-Cookie'),
+            'cache_control' => request()->header('Cache-Control'),
+        ],
     ]);
-})->middleware(['web']);
+});
 
 // Test Livewire upload endpoint specifically
 Route::post('/debug-livewire-upload', function () {
