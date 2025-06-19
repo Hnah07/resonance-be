@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Checkin extends Model
 {
@@ -18,12 +19,12 @@ class Checkin extends Model
 
     protected $casts = [];
 
-    public function concert()
+    public function concert(): BelongsTo
     {
         return $this->belongsTo(Concert::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

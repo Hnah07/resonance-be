@@ -5369,6 +5369,88 @@
                 }
             }
         },
+        "/api/summary-stats": {
+            "get": {
+                "tags": [
+                    "Summary Stats"
+                ],
+                "summary": "Get summary statistics for the logged-in user",
+                "operationId": "5c6decc7a1b549d45b1a634a47465b3c",
+                "responses": {
+                    "200": {
+                        "description": "Summary statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "concerts_this_year": {
+                                            "type": "integer",
+                                            "example": 12
+                                        },
+                                        "total_concerts": {
+                                            "type": "integer",
+                                            "example": 45
+                                        },
+                                        "countries_visited": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "favorite_genre": {
+                                            "properties": {
+                                                "genre": {
+                                                    "type": "string",
+                                                    "example": "Rock"
+                                                },
+                                                "count": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "most_seen_artist": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Arctic Monkeys"
+                                                },
+                                                "count": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "top_venue": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Sportpaleis"
+                                                },
+                                                "count": {
+                                                    "type": "integer",
+                                                    "example": 8
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/timeline": {
             "get": {
                 "tags": [
@@ -5626,6 +5708,2556 @@
                         "sanctum": []
                     }
                 ]
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get a specific user's profile",
+                "description": "Retrieve detailed information about a specific user including their profile, stats, and relationships",
+                "operationId": "36a33ff774d5cba33c039dec2c3e0287",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User profile retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "username": {
+                                                    "type": "string",
+                                                    "example": "johndoe"
+                                                },
+                                                "profile_photo_url": {
+                                                    "type": "string",
+                                                    "example": "https://example.com/photos/profile.jpg",
+                                                    "nullable": true
+                                                },
+                                                "bio": {
+                                                    "type": "string",
+                                                    "example": "Music lover and concert enthusiast",
+                                                    "nullable": true
+                                                },
+                                                "city": {
+                                                    "type": "string",
+                                                    "example": "Antwerp",
+                                                    "nullable": true
+                                                },
+                                                "country": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "format": "uuid",
+                                                            "example": "456e7890-e89b-12d3-a456-426614174000"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Belgium"
+                                                        }
+                                                    },
+                                                    "type": "object",
+                                                    "nullable": true
+                                                },
+                                                "country_name": {
+                                                    "type": "string",
+                                                    "example": "Belgium",
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-01-15T10:30:00Z"
+                                                },
+                                                "stats": {
+                                                    "properties": {
+                                                        "followers_count": {
+                                                            "type": "integer",
+                                                            "example": 42
+                                                        },
+                                                        "following_count": {
+                                                            "type": "integer",
+                                                            "example": 15
+                                                        },
+                                                        "checkins_count": {
+                                                            "type": "integer",
+                                                            "example": 67
+                                                        },
+                                                        "concerts_count": {
+                                                            "type": "integer",
+                                                            "example": 23
+                                                        },
+                                                        "artists_count": {
+                                                            "type": "integer",
+                                                            "example": 18
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "is_following": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "is_current_user": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "user"
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/search": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Search for users by username or name",
+                "description": "Search for users using their username or display name. Returns up to 10 matching users.",
+                "operationId": "d1d146ddfc1c62c0b82b2da1ef770008",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Search term to match against username or name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "minLength": 1,
+                            "example": "john"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search results or empty array if no query provided",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "123e4567-e89b-12d3-a456-426614174000"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "username": {
+                                                                "type": "string",
+                                                                "example": "johndoe"
+                                                            },
+                                                            "profile_photo_url": {
+                                                                "type": "string",
+                                                                "example": "https://example.com/photos/profile.jpg",
+                                                                "nullable": true
+                                                            },
+                                                            "bio": {
+                                                                "type": "string",
+                                                                "example": "Music lover and concert enthusiast",
+                                                                "nullable": true
+                                                            },
+                                                            "city": {
+                                                                "type": "string",
+                                                                "example": "Antwerp",
+                                                                "nullable": true
+                                                            },
+                                                            "country": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "format": "uuid",
+                                                                        "example": "456e7890-e89b-12d3-a456-426614174000"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Belgium"
+                                                                    }
+                                                                },
+                                                                "type": "object",
+                                                                "nullable": true
+                                                            },
+                                                            "country_name": {
+                                                                "type": "string",
+                                                                "example": "Belgium",
+                                                                "nullable": true
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time",
+                                                                "example": "2024-01-15T10:30:00Z"
+                                                            },
+                                                            "stats": {
+                                                                "properties": {
+                                                                    "followers_count": {
+                                                                        "type": "integer",
+                                                                        "example": 42
+                                                                    },
+                                                                    "following_count": {
+                                                                        "type": "integer",
+                                                                        "example": 15
+                                                                    },
+                                                                    "checkins_count": {
+                                                                        "type": "integer",
+                                                                        "example": 67
+                                                                    },
+                                                                    "concerts_count": {
+                                                                        "type": "integer",
+                                                                        "example": 23
+                                                                    },
+                                                                    "artists_count": {
+                                                                        "type": "integer",
+                                                                        "example": 18
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "is_following": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            },
+                                                            "is_current_user": {
+                                                                "type": "boolean",
+                                                                "example": false
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "users": {
+                                                    "type": "array",
+                                                    "items": {}
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get a paginated list of users",
+                "description": "Retrieve a paginated list of all users, ordered by creation date (newest first)",
+                "operationId": "c457726701591d1183b53aa71fc13441",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of users per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "maximum": 100,
+                            "minimum": 1,
+                            "example": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of users",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid",
+                                                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "John Doe"
+                                                    },
+                                                    "username": {
+                                                        "type": "string",
+                                                        "example": "johndoe"
+                                                    },
+                                                    "profile_photo_url": {
+                                                        "type": "string",
+                                                        "example": "https://example.com/photos/profile.jpg",
+                                                        "nullable": true
+                                                    },
+                                                    "bio": {
+                                                        "type": "string",
+                                                        "example": "Music lover and concert enthusiast",
+                                                        "nullable": true
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "example": "Antwerp",
+                                                        "nullable": true
+                                                    },
+                                                    "country": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "456e7890-e89b-12d3-a456-426614174000"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Belgium"
+                                                            }
+                                                        },
+                                                        "type": "object",
+                                                        "nullable": true
+                                                    },
+                                                    "country_name": {
+                                                        "type": "string",
+                                                        "example": "Belgium",
+                                                        "nullable": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-01-15T10:30:00Z"
+                                                    },
+                                                    "stats": {
+                                                        "properties": {
+                                                            "followers_count": {
+                                                                "type": "integer",
+                                                                "example": 42
+                                                            },
+                                                            "following_count": {
+                                                                "type": "integer",
+                                                                "example": 15
+                                                            },
+                                                            "checkins_count": {
+                                                                "type": "integer",
+                                                                "example": 67
+                                                            },
+                                                            "concerts_count": {
+                                                                "type": "integer",
+                                                                "example": 23
+                                                            },
+                                                            "artists_count": {
+                                                                "type": "integer",
+                                                                "example": 18
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "is_following": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    },
+                                                    "is_current_user": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users?page=5"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users?page=2"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/{id}/check-ins": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get check-ins for a specific user",
+                "description": "Retrieve a paginated list of check-ins for a specific user, ordered by creation date (newest first)",
+                "operationId": "855b8b2da6f76d295485d1d90ad1011e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of check-ins per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of user check-ins",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid",
+                                                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                                                    },
+                                                    "user": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "456e7890-e89b-12d3-a456-426614174000"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "username": {
+                                                                "type": "string",
+                                                                "example": "johndoe"
+                                                            },
+                                                            "profile_photo_url": {
+                                                                "type": "string",
+                                                                "example": "https://example.com/photos/profile.jpg",
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "concert": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "789e0123-e89b-12d3-a456-426614174000"
+                                                            },
+                                                            "date": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "example": "2024-07-19"
+                                                            },
+                                                            "event": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "format": "uuid",
+                                                                        "example": "012e3456-e89b-12d3-a456-426614174000"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Tomorrowland 2024"
+                                                                    },
+                                                                    "type": {
+                                                                        "type": "string",
+                                                                        "example": "festival"
+                                                                    },
+                                                                    "image_url": {
+                                                                        "type": "string",
+                                                                        "example": "https://example.com/events/tomorrowland.jpg",
+                                                                        "nullable": true
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "location": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "format": "uuid",
+                                                                        "example": "345e6789-e89b-12d3-a456-426614174000"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Boom"
+                                                                    },
+                                                                    "city": {
+                                                                        "type": "string",
+                                                                        "example": "Boom"
+                                                                    },
+                                                                    "country": {
+                                                                        "type": "string",
+                                                                        "example": "Belgium"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "artists": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "string",
+                                                                            "format": "uuid",
+                                                                            "example": "678e9012-e89b-12d3-a456-426614174000"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Martin Garrix"
+                                                                        },
+                                                                        "image_url": {
+                                                                            "type": "string",
+                                                                            "example": "https://example.com/artists/martin-garrix.jpg",
+                                                                            "nullable": true
+                                                                        },
+                                                                        "genres": {
+                                                                            "type": "array",
+                                                                            "items": {
+                                                                                "properties": {
+                                                                                    "id": {
+                                                                                        "type": "string",
+                                                                                        "format": "uuid",
+                                                                                        "example": "901e2345-e89b-12d3-a456-426614174000"
+                                                                                    },
+                                                                                    "name": {
+                                                                                        "type": "string",
+                                                                                        "example": "Electronic"
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "photos": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string",
+                                                                    "format": "uuid",
+                                                                    "example": "234e5678-e89b-12d3-a456-426614174000"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "example": "https://example.com/photos/checkin.jpg"
+                                                                },
+                                                                "caption": {
+                                                                    "type": "string",
+                                                                    "example": "Amazing night!",
+                                                                    "nullable": true
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "likes_count": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "comments_count": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "comments": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string",
+                                                                    "format": "uuid",
+                                                                    "example": "567e8901-e89b-12d3-a456-426614174000"
+                                                                },
+                                                                "comment": {
+                                                                    "type": "string",
+                                                                    "example": "Looks amazing!"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time",
+                                                                    "example": "2024-07-19T20:00:00Z"
+                                                                },
+                                                                "user": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "string",
+                                                                            "format": "uuid",
+                                                                            "example": "890e1234-e89b-12d3-a456-426614174000"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Jane Smith"
+                                                                        },
+                                                                        "username": {
+                                                                            "type": "string",
+                                                                            "example": "janesmith"
+                                                                        },
+                                                                        "profile_photo_url": {
+                                                                            "type": "string",
+                                                                            "example": "https://example.com/photos/jane.jpg",
+                                                                            "nullable": true
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "is_liked": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    },
+                                                    "rating": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 4.5,
+                                                        "nullable": true
+                                                    },
+                                                    "review": {
+                                                        "type": "string",
+                                                        "example": "Incredible experience!",
+                                                        "nullable": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-07-19T19:30:00Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-07-19T19:30:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users/123e4567-e89b-12d3-a456-426614174000/check-ins?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users/123e4567-e89b-12d3-a456-426614174000/check-ins?page=3"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users/123e4567-e89b-12d3-a456-426614174000/check-ins?page=2"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{userId}/summary-stats": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get summary statistics for a specific user",
+                "description": "Retrieve summary statistics including followers, following, check-ins, concerts, and artists for a specific user",
+                "operationId": "a858e3411449524e2d9d445d0a9e90b2",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "User UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User summary statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                                },
+                                                "followers_count": {
+                                                    "type": "integer",
+                                                    "example": 42
+                                                },
+                                                "following_count": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "checkins_count": {
+                                                    "type": "integer",
+                                                    "example": 67
+                                                },
+                                                "concerts_count": {
+                                                    "type": "integer",
+                                                    "example": 23
+                                                },
+                                                "artists_count": {
+                                                    "type": "integer",
+                                                    "example": 18
+                                                },
+                                                "total_rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 4.2
+                                                },
+                                                "average_rating": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 4.1
+                                                },
+                                                "reviews_count": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "photos_count": {
+                                                    "type": "integer",
+                                                    "example": 45
+                                                },
+                                                "likes_received": {
+                                                    "type": "integer",
+                                                    "example": 156
+                                                },
+                                                "comments_received": {
+                                                    "type": "integer",
+                                                    "example": 89
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{userId}/stats": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get detailed statistics for a specific user",
+                "description": "Retrieve detailed statistics including monthly attendance, genre distribution, top venues, and top artists for a specific user",
+                "operationId": "60310eeffb8854489863b9f6d9d2de38",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "User UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User detailed statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "followers_count": {
+                                            "type": "integer",
+                                            "example": 42
+                                        },
+                                        "following_count": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "followers": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "profile_photo_path": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "following": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "profile_photo_path": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "monthly_attendance": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "month_number": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "month": {
+                                                        "type": "string",
+                                                        "example": "Jan"
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "genre_distribution": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "genre": {
+                                                        "type": "string",
+                                                        "example": "Electronic"
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 15
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "top_venues": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "venue": {
+                                                        "type": "string",
+                                                        "example": "Tomorrowland"
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "top_artists": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "artist": {
+                                                        "type": "string",
+                                                        "example": "Martin Garrix"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{userId}/photos": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get all photos for a specific user",
+                "description": "Retrieve all check-in photos for a specific user, ordered by creation date (newest first)",
+                "operationId": "619289115c570f2c33df5fe0fca01a83",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "User UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of photos per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "maximum": 100,
+                            "minimum": 1,
+                            "example": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User photos retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "url": {
+                                                        "type": "string"
+                                                    },
+                                                    "caption": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "checkin": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "format": "uuid"
+                                                            },
+                                                            "concert": {
+                                                                "properties": {
+                                                                    "date": {
+                                                                        "type": "string",
+                                                                        "format": "date"
+                                                                    },
+                                                                    "event": {
+                                                                        "properties": {
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    },
+                                                                    "location": {
+                                                                        "properties": {
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "city": {
+                                                                                "type": "string"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{userId}/friends": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get friends (followers and following) for a specific user",
+                "description": "Retrieve both followers and users being followed by a specific user",
+                "operationId": "da57f8d42636f5087b27abe163b74b6a",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "User UUID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User friends retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "followers": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "profile_photo_path": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "bio": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "country_name": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "following": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "profile_photo_path": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "bio": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "country_name": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{user}/follow": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Follow a user",
+                "description": "Follow a specific user by their ID",
+                "operationId": "c8c15586b214e969fc50e4114f9cdfac",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "User UUID to follow",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully followed user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully followed user"
+                                        },
+                                        "follower": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "409": {
+                        "description": "Already following this user"
+                    },
+                    "422": {
+                        "description": "Cannot follow yourself"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Unfollow a user",
+                "description": "Unfollow a specific user by their ID",
+                "operationId": "eede76706ffc82b0892e7d55bb4c5cae",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "User UUID to unfollow",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "123e4567-e89b-12d3-a456-426614174000"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successfully unfollowed user"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Follow relationship not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{username}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get a specific user's profile by username",
+                "description": "Retrieve detailed information about a specific user using their username",
+                "operationId": "476f68b0fbf52e3093ae7f59352bf91c",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "User username",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User profile retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "username": {
+                                                    "type": "string",
+                                                    "example": "johndoe"
+                                                },
+                                                "profile_photo_url": {
+                                                    "type": "string",
+                                                    "example": "https://example.com/photos/profile.jpg",
+                                                    "nullable": true
+                                                },
+                                                "bio": {
+                                                    "type": "string",
+                                                    "example": "Music lover and concert enthusiast",
+                                                    "nullable": true
+                                                },
+                                                "city": {
+                                                    "type": "string",
+                                                    "example": "Antwerp",
+                                                    "nullable": true
+                                                },
+                                                "country": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "format": "uuid",
+                                                            "example": "456e7890-e89b-12d3-a456-426614174000"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Belgium"
+                                                        }
+                                                    },
+                                                    "type": "object",
+                                                    "nullable": true
+                                                },
+                                                "country_name": {
+                                                    "type": "string",
+                                                    "example": "Belgium",
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-01-15T10:30:00Z"
+                                                },
+                                                "stats": {
+                                                    "properties": {
+                                                        "followers_count": {
+                                                            "type": "integer",
+                                                            "example": 42
+                                                        },
+                                                        "following_count": {
+                                                            "type": "integer",
+                                                            "example": 15
+                                                        },
+                                                        "checkins_count": {
+                                                            "type": "integer",
+                                                            "example": 67
+                                                        },
+                                                        "concerts_count": {
+                                                            "type": "integer",
+                                                            "example": 23
+                                                        },
+                                                        "artists_count": {
+                                                            "type": "integer",
+                                                            "example": 18
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "is_following": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "is_current_user": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "user"
+                                                },
+                                                "is_active": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{username}/summary-stats": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get summary statistics for a specific user by username",
+                "description": "Retrieve summary statistics including concerts this year, total concerts, countries visited, favorite genre, most seen artist, and top venue for a specific user",
+                "operationId": "fb4242e8ab2dad2c81a5e7506cedf5f7",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "User username",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User summary statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "concerts_this_year": {
+                                            "type": "integer",
+                                            "example": 12
+                                        },
+                                        "total_concerts": {
+                                            "type": "integer",
+                                            "example": 45
+                                        },
+                                        "countries_visited": {
+                                            "type": "integer",
+                                            "example": 5
+                                        },
+                                        "countries_list": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "favorite_genre": {
+                                            "properties": {
+                                                "genre": {
+                                                    "type": "string",
+                                                    "example": "Rock"
+                                                },
+                                                "count": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "most_seen_artist": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Arctic Monkeys"
+                                                },
+                                                "count": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "top_venue": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Sportpaleis"
+                                                },
+                                                "count": {
+                                                    "type": "integer",
+                                                    "example": 8
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{username}/stats": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get detailed statistics for a specific user by username",
+                "description": "Retrieve detailed statistics including monthly attendance, genre distribution, top venues, and top artists for a specific user",
+                "operationId": "b1787f12ef289a78558efcca6f0c5fd9",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "User username",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User detailed statistics retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "followers_count": {
+                                            "type": "integer",
+                                            "example": 42
+                                        },
+                                        "following_count": {
+                                            "type": "integer",
+                                            "example": 15
+                                        },
+                                        "followers": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "profile_photo_path": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "following": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "profile_photo_path": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "monthly_attendance": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "month_number": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "month": {
+                                                        "type": "string",
+                                                        "example": "Jan"
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "genre_distribution": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "genre": {
+                                                        "type": "string",
+                                                        "example": "Electronic"
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 15
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "top_venues": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "venue": {
+                                                        "type": "string",
+                                                        "example": "Tomorrowland"
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "top_artists": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "artist": {
+                                                        "type": "string",
+                                                        "example": "Martin Garrix"
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "count": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{username}/photos": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get all photos for a specific user by username",
+                "description": "Retrieve all check-in photos for a specific user, ordered by creation date (newest first)",
+                "operationId": "830d8587fd97f9178cebe10094fab306",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "User username",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of photos per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "maximum": 100,
+                            "minimum": 1,
+                            "example": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User photos retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "url": {
+                                                        "type": "string"
+                                                    },
+                                                    "caption": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "checkin": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "format": "uuid"
+                                                            },
+                                                            "concert": {
+                                                                "properties": {
+                                                                    "date": {
+                                                                        "type": "string",
+                                                                        "format": "date"
+                                                                    },
+                                                                    "event": {
+                                                                        "properties": {
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "type": {
+                                                                                "type": "string"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    },
+                                                                    "location": {
+                                                                        "properties": {
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "city": {
+                                                                                "type": "string"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string",
+                                                                "format": "date-time"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{username}/friends": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get friends (followers and following) for a specific user by username",
+                "description": "Retrieve both followers and users being followed by a specific user",
+                "operationId": "a18cdd205fae4eb9c23747d688c4722d",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "User username",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User friends retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "followers": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "profile_photo_path": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "bio": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "country_name": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "following": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "profile_photo_path": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "bio": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "city": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "country_name": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/users/{username}/follow": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Follow a user by username",
+                "description": "Follow a specific user by their username",
+                "operationId": "67864b1d1f3ab13ae49148cdccbae11d",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "User username to follow",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully followed user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully followed user"
+                                        },
+                                        "follower": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "format": "uuid"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "409": {
+                        "description": "Already following this user"
+                    },
+                    "422": {
+                        "description": "Cannot follow yourself"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Unfollow a user by username",
+                "description": "Unfollow a specific user by their username",
+                "operationId": "e04511b4276e2db06d4dfea2693b9302",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "User username to unfollow",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successfully unfollowed user"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Follow relationship not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{username}/check-ins": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get check-ins for a specific user by username",
+                "description": "Retrieve a paginated list of check-ins for a specific user, ordered by creation date (newest first)",
+                "operationId": "ad2d67872dee9d7ca3cf60e08ff765c6",
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "path",
+                        "description": "User username",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "johndoe"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1,
+                            "minimum": 1,
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of check-ins per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "maximum": 50,
+                            "minimum": 1,
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of user check-ins",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "format": "uuid",
+                                                        "example": "123e4567-e89b-12d3-a456-426614174000"
+                                                    },
+                                                    "user": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "456e7890-e89b-12d3-a456-426614174000"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "John Doe"
+                                                            },
+                                                            "username": {
+                                                                "type": "string",
+                                                                "example": "johndoe"
+                                                            },
+                                                            "profile_photo_url": {
+                                                                "type": "string",
+                                                                "example": "https://example.com/photos/profile.jpg",
+                                                                "nullable": true
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "concert": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string",
+                                                                "format": "uuid",
+                                                                "example": "789e0123-e89b-12d3-a456-426614174000"
+                                                            },
+                                                            "date": {
+                                                                "type": "string",
+                                                                "format": "date",
+                                                                "example": "2024-07-19"
+                                                            },
+                                                            "event": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "format": "uuid",
+                                                                        "example": "012e3456-e89b-12d3-a456-426614174000"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Tomorrowland 2024"
+                                                                    },
+                                                                    "type": {
+                                                                        "type": "string",
+                                                                        "example": "festival"
+                                                                    },
+                                                                    "image_url": {
+                                                                        "type": "string",
+                                                                        "example": "https://example.com/events/tomorrowland.jpg",
+                                                                        "nullable": true
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "location": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string",
+                                                                        "format": "uuid",
+                                                                        "example": "345e6789-e89b-12d3-a456-426614174000"
+                                                                    },
+                                                                    "name": {
+                                                                        "type": "string",
+                                                                        "example": "Boom"
+                                                                    },
+                                                                    "city": {
+                                                                        "type": "string",
+                                                                        "example": "Boom"
+                                                                    },
+                                                                    "country": {
+                                                                        "type": "string",
+                                                                        "example": "Belgium"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "artists": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "string",
+                                                                            "format": "uuid",
+                                                                            "example": "678e9012-e89b-12d3-a456-426614174000"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Martin Garrix"
+                                                                        },
+                                                                        "image_url": {
+                                                                            "type": "string",
+                                                                            "example": "https://example.com/artists/martin-garrix.jpg",
+                                                                            "nullable": true
+                                                                        },
+                                                                        "genres": {
+                                                                            "type": "array",
+                                                                            "items": {
+                                                                                "properties": {
+                                                                                    "id": {
+                                                                                        "type": "string",
+                                                                                        "format": "uuid",
+                                                                                        "example": "901e2345-e89b-12d3-a456-426614174000"
+                                                                                    },
+                                                                                    "name": {
+                                                                                        "type": "string",
+                                                                                        "example": "Electronic"
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "photos": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string",
+                                                                    "format": "uuid",
+                                                                    "example": "234e5678-e89b-12d3-a456-426614174000"
+                                                                },
+                                                                "url": {
+                                                                    "type": "string",
+                                                                    "example": "https://example.com/photos/checkin.jpg"
+                                                                },
+                                                                "caption": {
+                                                                    "type": "string",
+                                                                    "example": "Amazing night!",
+                                                                    "nullable": true
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "likes_count": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "comments_count": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "comments": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string",
+                                                                    "format": "uuid",
+                                                                    "example": "567e8901-e89b-12d3-a456-426614174000"
+                                                                },
+                                                                "comment": {
+                                                                    "type": "string",
+                                                                    "example": "Looks amazing!"
+                                                                },
+                                                                "created_at": {
+                                                                    "type": "string",
+                                                                    "format": "date-time",
+                                                                    "example": "2024-07-19T20:00:00Z"
+                                                                },
+                                                                "user": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "string",
+                                                                            "format": "uuid",
+                                                                            "example": "890e1234-e89b-12d3-a456-426614174000"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string",
+                                                                            "example": "Jane Smith"
+                                                                        },
+                                                                        "username": {
+                                                                            "type": "string",
+                                                                            "example": "janesmith"
+                                                                        },
+                                                                        "profile_photo_url": {
+                                                                            "type": "string",
+                                                                            "example": "https://example.com/photos/jane.jpg",
+                                                                            "nullable": true
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "is_liked": {
+                                                        "type": "boolean",
+                                                        "example": false
+                                                    },
+                                                    "rating": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 4.5,
+                                                        "nullable": true
+                                                    },
+                                                    "review": {
+                                                        "type": "string",
+                                                        "example": "Incredible experience!",
+                                                        "nullable": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-07-19T19:30:00Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-07-19T19:30:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "links": {
+                                            "properties": {
+                                                "first": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users/johndoe/check-ins?page=1"
+                                                },
+                                                "last": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users/johndoe/check-ins?page=3"
+                                                },
+                                                "prev": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "next": {
+                                                    "type": "string",
+                                                    "example": "http://localhost/api/users/johndoe/check-ins?page=2"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "from": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "to": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
             }
         }
     },
@@ -6072,8 +8704,16 @@
             "description": "API Endpoints for user timeline"
         },
         {
+            "name": "Users",
+            "description": "API Endpoints for managing user profiles, search, and user listings"
+        },
+        {
             "name": "File Upload",
             "description": "File Upload"
+        },
+        {
+            "name": "Summary Stats",
+            "description": "Summary Stats"
         }
     ]
 }

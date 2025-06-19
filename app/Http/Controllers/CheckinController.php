@@ -55,7 +55,7 @@ class CheckinController extends Controller
     {
         $checkins = Checkin::with([
             'user:id,name,profile_photo_path',
-            'concert:id,date,event_id',
+            'concert:id,date,event_id,location_id',
             'concert.event:id,name',
             'concert.artists:id,name',
             'photos:id,checkin_id,url',
@@ -112,7 +112,7 @@ class CheckinController extends Controller
 
 
         // Only load the concert relationship for the response
-        $checkin->load('concert:id,date,event_id', 'concert.event:id,name');
+        $checkin->load('concert:id,date,event_id,location_id', 'concert.event:id,name');
 
         return response()->json($checkin, 201);
     }
@@ -161,7 +161,7 @@ class CheckinController extends Controller
     {
         $checkin->load([
             'user:id,name,profile_photo_path',
-            'concert:id,date,event_id',
+            'concert:id,date,event_id,location_id',
             'concert.event:id,name',
             'concert.artists:id,name',
             'photos:id,checkin_id,url',

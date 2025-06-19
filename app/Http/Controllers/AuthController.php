@@ -75,9 +75,6 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->firstOrFail();
 
-        // Revoke all existing tokens
-        $user->tokens()->delete();
-
         $token = $user->createToken('auth_token', ['*'], now()->addMinutes(config('sanctum.expiration')))->plainTextToken;
 
         return response()->json([
