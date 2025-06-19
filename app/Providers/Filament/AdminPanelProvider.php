@@ -62,7 +62,6 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->viteTheme('resources/css/filament/admin/theme.css')
-            ->maxFileUploadSize(12288); // 12MB max file upload size
+            ->viteTheme('resources/css/filament/admin/theme.css');
     }
 }

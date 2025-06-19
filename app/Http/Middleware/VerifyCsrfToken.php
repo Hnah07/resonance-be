@@ -18,8 +18,9 @@ class VerifyCsrfToken extends Middleware
         'sanctum/csrf-cookie',
         'login',
         'logout',
-        // Livewire file uploads
+        // Livewire file uploads and messages
         'livewire/upload-file',
-        'livewire/message/*'
+        'livewire/message/*',
+        'livewire/*'
     ];
 }

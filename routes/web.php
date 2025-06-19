@@ -7,13 +7,24 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Debug route for testing file uploads
+// Debug routes for testing file uploads
 Route::get('/debug-upload', function () {
     return response()->json([
         'message' => 'Upload endpoint is accessible',
         'session_id' => session()->getId(),
         'user' => Auth::user() ? Auth::user()->id : 'not authenticated',
         'csrf_token' => csrf_token(),
+        'app_env' => config('app.env'),
+        'app_url' => config('app.url'),
+    ]);
+})->middleware(['web']);
+
+Route::get('/debug-session', function () {
+    return response()->json([
+        'session_id' => session()->getId(),
+        'session_data' => session()->all(),
+        'authenticated' => Auth::check(),
+        'user_id' => Auth::id(),
     ]);
 })->middleware(['web']);
 
