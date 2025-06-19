@@ -40,7 +40,7 @@ class UserFactory extends Factory
             'current_team_id' => null,
             'role' => 'user',
             'is_active' => true,
-            'bio' => fake()->optional()->paragraph(),
+            'bio' => fake()->optional()->sentence(),
             'city' => fake()->optional()->city(),
             'country_id' => Country::where('name', 'Belgium')->first()?->id,
         ];
