@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
     return view('welcome');
@@ -10,10 +11,33 @@ Route::get('/', function () {
 
 // Route to serve storage files (fallback for production)
 Route::get('/storage/{path}', function ($path) {
-    $fullPath = storage_path('app/public/' . $path);
+    // Remove any leading slashes
+    $path = ltrim($path, '/');
 
-    if (!file_exists($fullPath)) {
-        abort(404);
+    // Check multiple possible locations
+    $possiblePaths = [
+        storage_path('app/public/' . $path),
+        storage_path('app/' . $path),
+        storage_path($path),
+    ];
+
+    $fullPath = null;
+    foreach ($possiblePaths as $testPath) {
+        if (file_exists($testPath)) {
+            $fullPath = $testPath;
+            break;
+        }
+    }
+
+    if (!$fullPath) {
+        // Log the attempted access for debugging
+        Log::info('File not found', [
+            'requested_path' => $path,
+            'possible_paths' => $possiblePaths,
+            'storage_exists' => is_dir(storage_path('app/public')),
+            'events_dir_exists' => is_dir(storage_path('app/public/events')),
+        ]);
+        abort(404, 'File not found: ' . $path);
     }
 
     $file = file_get_contents($fullPath);
@@ -22,6 +46,7 @@ Route::get('/storage/{path}', function ($path) {
     return response($file, 200, [
         'Content-Type' => $type,
         'Cache-Control' => 'public, max-age=31536000',
+        'Content-Length' => filesize($fullPath),
     ]);
 })->where('path', '.*');
 
@@ -107,6 +132,23 @@ Route::post('/debug-livewire-upload', function () {
         'headers' => request()->headers->all(),
     ]);
 })->middleware(['web']);
+
+// Simple test route to check if file exists
+Route::get('/test-file', function () {
+    $testPath = 'events/gmm2025.png';
+    $fullPath = storage_path('app/public/' . $testPath);
+
+    return response()->json([
+        'file_path' => $testPath,
+        'full_path' => $fullPath,
+        'exists' => file_exists($fullPath),
+        'is_file' => is_file($fullPath),
+        'size' => file_exists($fullPath) ? filesize($fullPath) : 'N/A',
+        'storage_dir_exists' => is_dir(storage_path('app/public')),
+        'events_dir_exists' => is_dir(storage_path('app/public/events')),
+        'files_in_events' => is_dir(storage_path('app/public/events')) ? scandir(storage_path('app/public/events')) : 'N/A',
+    ]);
+});
 
 Route::middleware([
     'auth:sanctum',

@@ -63,7 +63,12 @@ class Event extends Model
             $value = substr($value, 8); // Remove 'storage/' prefix
         }
 
-        // For both local and production, use asset helper
+        // For production (DigitalOcean App Platform), use the fallback route
+        if (app()->environment('production') || config('app.env') === 'production') {
+            return url('/storage/' . $value);
+        }
+
+        // For local development, use asset helper
         return asset('storage/' . $value);
     }
 
