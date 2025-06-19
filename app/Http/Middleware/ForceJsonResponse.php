@@ -15,14 +15,20 @@ class ForceJsonResponse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $acceptHeader = $request->header('Accept');
-        if (strpos($acceptHeader, 'application/json') === false) {
-            if (! empty($acceptHeader)) {
-                $request->headers->set('Accept', $acceptHeader . ', application/json');
-            } else {
-                $request->headers->set('Accept', 'application/json');
-            }
+        // Don't force JSON for Livewire requests (Filament admin panel)
+        if (
+            str_starts_with($request->path(), 'livewire') ||
+            str_starts_with($request->path(), 'admin') ||
+            str_starts_with($request->path(), 'filament')
+        ) {
+            return $next($request);
         }
+
+        // Only force JSON for API requests
+        if (str_starts_with($request->path(), 'api')) {
+            $request->headers->set('Accept', 'application/json');
+        }
+
         return $next($request);
     }
 }
