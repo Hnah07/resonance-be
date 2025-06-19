@@ -58,7 +58,41 @@ class Event extends Model
             return $value;
         }
 
+        // If it starts with 'storage/', remove it to avoid double paths
+        if (str_starts_with($value, 'storage/')) {
+            $value = substr($value, 8); // Remove 'storage/' prefix
+        }
+
         // For both local and production, use asset helper
         return asset('storage/' . $value);
+    }
+
+    /**
+     * Set the image URL.
+     */
+    public function setImageUrlAttribute($value)
+    {
+        if (!$value) {
+            $this->attributes['image_url'] = null;
+            return;
+        }
+
+        // If it's a full URL, extract just the path
+        if (str_starts_with($value, 'http')) {
+            // Extract the path from the URL
+            $path = parse_url($value, PHP_URL_PATH);
+            if (str_starts_with($path, '/storage/')) {
+                $path = substr($path, 9); // Remove '/storage/' prefix
+            }
+            $this->attributes['image_url'] = $path;
+            return;
+        }
+
+        // If it starts with 'storage/', remove it
+        if (str_starts_with($value, 'storage/')) {
+            $value = substr($value, 8);
+        }
+
+        $this->attributes['image_url'] = $value;
     }
 }

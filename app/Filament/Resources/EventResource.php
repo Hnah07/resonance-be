@@ -106,8 +106,7 @@ class EventResource extends Resource
                             ->deleteUploadedFileUsing(function ($file) {
                                 Storage::disk('public')->delete($file);
                             })
-                            ->default(fn($record) => $record?->getRawOriginal('image_url'))
-                            ->required(),
+                            ->nullable(),
 
                         Forms\Components\Select::make('source')
                             ->relationship('source', 'source')
@@ -133,7 +132,10 @@ class EventResource extends Resource
                     ->square()
                     ->defaultImageUrl(url('/images/placeholder.jpg'))
                     ->disk('public')
-                    ->visibility('public'),
+                    ->visibility('public')
+                    ->getStateUsing(function ($record) {
+                        return $record->image_url;
+                    }),
 
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
