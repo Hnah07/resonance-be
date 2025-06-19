@@ -15,11 +15,16 @@ return [
     |
     */
 
-    'paths' => ['*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000')],
+    'allowed_origins' => [
+        env('FRONTEND_URL', 'http://localhost:3000'),
+        env('APP_URL', 'http://localhost'),
+        // Add any additional domains that need access
+        ...array_filter(explode(',', env('CORS_ALLOWED_ORIGINS', ''))),
+    ],
 
     'allowed_origins_patterns' => [],
 
