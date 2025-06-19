@@ -150,6 +150,54 @@ Route::get('/test-file', function () {
     ]);
 });
 
+// Explore storage directory structure
+Route::get('/explore-storage', function () {
+    $storagePath = storage_path('app/public');
+    $result = [];
+
+    function scanDirectory($path, $depth = 0)
+    {
+        if ($depth > 3) return []; // Limit depth to avoid infinite recursion
+
+        $items = [];
+        if (is_dir($path)) {
+            $files = scandir($path);
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..') {
+                    $fullPath = $path . '/' . $file;
+                    $relativePath = str_replace(storage_path('app/public/'), '', $fullPath);
+
+                    if (is_dir($fullPath)) {
+                        $items[] = [
+                            'name' => $file,
+                            'type' => 'directory',
+                            'path' => $relativePath,
+                            'contents' => scanDirectory($fullPath, $depth + 1)
+                        ];
+                    } else {
+                        $items[] = [
+                            'name' => $file,
+                            'type' => 'file',
+                            'path' => $relativePath,
+                            'size' => filesize($fullPath),
+                            'modified' => date('Y-m-d H:i:s', filemtime($fullPath))
+                        ];
+                    }
+                }
+            }
+        }
+        return $items;
+    }
+
+    $result = [
+        'storage_path' => $storagePath,
+        'storage_exists' => is_dir($storagePath),
+        'contents' => scanDirectory($storagePath)
+    ];
+
+    return response()->json($result);
+});
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
