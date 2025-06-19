@@ -25,6 +25,20 @@ Route::get('/debug-session', function () {
         'session_data' => session()->all(),
         'authenticated' => Auth::check(),
         'user_id' => Auth::id(),
+        'user_email' => Auth::user() ? Auth::user()->email : null,
+        'cookies' => request()->cookies->all(),
+    ]);
+})->middleware(['web']);
+
+// Test Livewire upload endpoint specifically
+Route::post('/debug-livewire-upload', function () {
+    return response()->json([
+        'message' => 'Livewire upload endpoint test',
+        'session_id' => session()->getId(),
+        'authenticated' => Auth::check(),
+        'user_id' => Auth::id(),
+        'method' => request()->method(),
+        'headers' => request()->headers->all(),
     ]);
 })->middleware(['web']);
 
