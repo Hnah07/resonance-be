@@ -67,7 +67,7 @@ class EventResource extends Resource
                             ->native(false)
                             ->displayFormat('d/m/Y')
                             ->closeOnDateSelection()
-                            ->after('start_date'),
+                            ->afterOrEqual('start_date'),
 
                         Forms\Components\Select::make('type')
                             ->required()
@@ -108,16 +108,14 @@ class EventResource extends Resource
                             })
                             ->nullable(),
 
-                        Forms\Components\Select::make('source')
+                        Forms\Components\Select::make('source_id')
                             ->relationship('source', 'source')
                             ->required()
-                            ->options(Source::pluck('source', 'source'))
                             ->native(false),
 
-                        Forms\Components\Select::make('status')
+                        Forms\Components\Select::make('status_id')
                             ->relationship('status', 'status')
                             ->required()
-                            ->options(Status::pluck('status', 'status'))
                             ->native(false),
                     ])
                     ->columns(2),
