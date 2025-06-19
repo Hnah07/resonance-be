@@ -15,62 +15,62 @@ class ArtistConcertSeeder extends Seeder
      */
     public function run(): void
     {
-        // Day 1 - June 20
+        // Day 1 - June 19
         ArtistConcert::create([
             'artist_id' => Artist::where('name', 'Iron Maiden')->first()->id,
-            'concert_id' => Concert::whereDate('date', '2024-06-20')
+            'concert_id' => Concert::whereDate('date', '2024-06-19')
                 ->whereHas('event', fn($q) => $q->where('name', 'Graspop Metal Meeting'))
                 ->first()->id,
         ]);
 
         ArtistConcert::create([
             'artist_id' => Artist::where('name', 'Amenra')->first()->id,
-            'concert_id' => Concert::whereDate('date', '2024-06-20')
+            'concert_id' => Concert::whereDate('date', '2024-06-19')
                 ->whereHas('event', fn($q) => $q->where('name', 'Graspop Metal Meeting'))
                 ->first()->id,
         ]);
 
-        // Day 2 - June 21
+        // Day 2 - June 20
         ArtistConcert::create([
             'artist_id' => Artist::where('name', 'Slipknot')->first()->id,
-            'concert_id' => Concert::whereDate('date', '2024-06-21')
+            'concert_id' => Concert::whereDate('date', '2024-06-20')
                 ->whereHas('event', fn($q) => $q->where('name', 'Graspop Metal Meeting'))
                 ->first()->id,
         ]);
 
         ArtistConcert::create([
             'artist_id' => Artist::where('name', 'Behemoth')->first()->id,
-            'concert_id' => Concert::whereDate('date', '2024-06-21')
+            'concert_id' => Concert::whereDate('date', '2024-06-20')
                 ->whereHas('event', fn($q) => $q->where('name', 'Graspop Metal Meeting'))
                 ->first()->id,
         ]);
 
-        // Day 3 - June 22
+        // Day 3 - June 21
         ArtistConcert::create([
             'artist_id' => Artist::where('name', 'Korn')->first()->id,
-            'concert_id' => Concert::whereDate('date', '2024-06-22')
+            'concert_id' => Concert::whereDate('date', '2024-06-21')
                 ->whereHas('event', fn($q) => $q->where('name', 'Graspop Metal Meeting'))
                 ->first()->id,
         ]);
 
         ArtistConcert::create([
             'artist_id' => Artist::where('name', 'Alien Ant Farm')->first()->id,
-            'concert_id' => Concert::whereDate('date', '2024-06-22')
+            'concert_id' => Concert::whereDate('date', '2024-06-21')
                 ->whereHas('event', fn($q) => $q->where('name', 'Graspop Metal Meeting'))
                 ->first()->id,
         ]);
 
-        // Day 4 - June 23
+        // Day 4 - June 22
         ArtistConcert::create([
             'artist_id' => Artist::where('name', 'Dream Theater')->first()->id,
-            'concert_id' => Concert::whereDate('date', '2024-06-23')
+            'concert_id' => Concert::whereDate('date', '2024-06-22')
                 ->whereHas('event', fn($q) => $q->where('name', 'Graspop Metal Meeting'))
                 ->first()->id,
         ]);
 
         ArtistConcert::create([
             'artist_id' => Artist::where('name', 'Alestorm')->first()->id,
-            'concert_id' => Concert::whereDate('date', '2024-06-23')
+            'concert_id' => Concert::whereDate('date', '2024-06-22')
                 ->whereHas('event', fn($q) => $q->where('name', 'Graspop Metal Meeting'))
                 ->first()->id,
         ]);
