@@ -102,7 +102,7 @@ class EventResource extends Resource
                             ->panelAspectRatio('2:1')
                             ->panelLayout('integrated')
                             ->maxSize(12288) // 12MB
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->deleteUploadedFileUsing(function ($file) {
                                 Storage::disk('public')->delete($file);
                             })
